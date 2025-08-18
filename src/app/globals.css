@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  /* --color-grey-inline:"" */
+
+  --border-width-8d: calc(8 / var(--bw) * 100vw);
+  --border-width-12d: calc(12 / var(--bw) * 100vw);
+
+  --color-blue-sky: #4489b2;
+  --color-dark-forest-green: #1b2a24;
+  --color-lime-moss: #a5be65;
+  --color-tropical-teal: #339999;
+  --color-soft-snow: #fafafa;
+  --color-golden-amber: #d08700;
+  --color-steel-navy: #314158;
+
+  --font-inter: var(--font-inter);
+  --font-playfair: var(--font-playfair);
+  --font-perfectly-vintage: var(--font-perfectly-vintage);
+
+  --radius-8d: calc(9 / var(--bw) * 100vw);
+  --radius-10d: calc(10 / var(--bw) * 100vw);
+  --radius-15d: calc(15 / var(--bw) * 100vw);
+
+  --text-10d: calc((10 / var(--bw) * 100vw));
+  --text-10d--letter-spacing: calc((-0.08 * 10 / var(--bw)) * 100vw);
+  --text-12d: calc((12 / var(--bw) * 100vw));
+  --text-13d: calc((13 / var(--bw) * 100vw));
+  --text-14d: calc((14 / var(--bw) * 100vw));
+  --text-15d: calc((15 / var(--bw) * 100vw));
+  --text-16d: calc((16 / var(--bw) * 100vw));
+  --text-17d: calc((17 / var(--bw) * 100vw));
+  --text-18d: calc((18 / var(--bw) * 100vw));
+  --text-20d: calc((20 / var(--bw) * 100vw));
+  --text-21d: calc((21 / var(--bw) * 100vw));
+  --text-24d: calc((24 / var(--bw) * 100vw));
+  --text-27d: calc((27 / var(--bw) * 100vw));
+  --text-31d: calc((31 / var(--bw) * 100vw));
+  --text-45d: calc((45 / var(--bw) * 100vw));
+  --text-51d: calc((51 / var(--bw) * 100vw));
+  --text-64d: calc((64 / var(--bw) * 100vw));
+  --text-64d--letter-spacing: calc((-0.05 * 64 / var(--bw)) * 100vw);
+
+  --text-17d: calc((17 / var(--bw) * 100vw));
+  --text-41d: calc((41 / var(--bw) * 100vw));
+}
+
+:root {
+  --bw: 1280;
+  --spacing: calc(100vw / var(--bw));
+  --navbar: 1000;
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --bw: 375;
+  }
+}
+
+@media (min-width: 768px) and (orientation: portrait) {
+  :root {
+    --bw: 480;
+  }
+}
