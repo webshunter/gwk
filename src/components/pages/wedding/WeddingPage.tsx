@@ -4,11 +4,11 @@ import Package from "./Package";
 
 const WeddingPage = () => {
   return (
-    <>
+    <div className="overflow-hidden">
       <Hero />
       <Section2 />
       <Package />
-    </>
+    </div>
   );
 };
 

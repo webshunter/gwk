@@ -5,7 +5,7 @@ const ImageCard = ({
   image,
   title,
   alt,
-  className = "md:landscape:w-350 md:landscape:h-350",
+  className = "md:landscape:w-350 max-xl:portrait:aspect-square md:landscape:h-350",
 }: {
   image: string;
   title?: string;

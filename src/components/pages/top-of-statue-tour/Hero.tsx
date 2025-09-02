@@ -8,19 +8,28 @@ export default function Hero() {
         alt="Hero Background"
       />
 
-      <div className="w-full h-full absolute top-0 left-0 z-10 flex justify-center items-center">
-        <div className="flex justify-center items-center flex-col md:landscape:gap-y-32">
-          <div className="">
-            <div className="font-playfair font-normal md:landscape:text-24d text-center text-white split">
-              The Soul of Garuda Wisnu Kencana
-            </div>
-            <div className="font-playfair font-extrabold md:landscape:text-64d text-center text-white leading-none split">
-              Top Of The Statue Tour
-            </div>
-          </div>
+      <div className="w-full h-full absolute top-0 left-0 z-10 flex justify-center items-center p-4 sm:p-6">
+        <div className="flex flex-col items-center gap-y-2 sm:gap-y-4 max-w-4xl text-center text-white">
+          <h2
+            className="
+              font-playfair font-normal split
+              text-xl sm:text-2xl lg:text-4xl
+            "
+          >
+            The Soul of Garuda Wisnu Kencana
+          </h2>
+          <h1
+            className="
+              font-playfair font-extrabold leading-tight md:leading-none split
+              text-4xl sm:text-5xl md:text-6xl lg:text-7xl
+            "
+          >
+            Top Of The Statue Tour
+          </h1>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-[20%] bg-gradient-to-t from-blue-sky via-blue-sky/80 to-transparent z-10"></div>
+
+      <div className="absolute bottom-0 left-0 w-full h-[15%] sm:h-[18%] md:h-[20%] bg-gradient-to-t from-blue-sky via-blue-sky/80 to-transparent z-10"></div>
     </section>
   );
 }

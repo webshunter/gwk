@@ -7,14 +7,20 @@ export default function HeroMain() {
         src="/images/perfomace/preformace-image.png"
         alt="Hero Background"
       />
-
-      <div className="w-full h-full absolute top-0 left-0 z-10 flex justify-center items-center">
-        <div className="flex justify-center items-center flex-col md:landscape:gap-y-32">
-          <div className="">
-            <div className="font-playfair font-extrabold md:landscape:text-64d text-center text-white leading-none split">
-              Finest Balinese <br /> Cultural Performance
-            </div>
-          </div>
+      <div className="w-full h-full absolute top-0 left-0 z-10 flex justify-center items-center p-4">
+        <div
+          className="
+            font-playfair font-extrabold text-white text-center leading-tight
+            text-4xl    
+            sm:text-5xl  
+            lg:text-6xl   
+            xl:text-64d   
+          "
+        >
+          Finest Balinese
+          <br className="sm:hidden" />
+          <span className="hidden sm:inline"> </span>
+          Cultural Performance
         </div>
       </div>
     </section>

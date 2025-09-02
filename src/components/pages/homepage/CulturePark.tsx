@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import GradientImage from "@/components/ui/GradientImage";
 import MarkerMap from "@/components/ui/MarkerMap";
 import Link from "next/link";
 import { cx } from "class-variance-authority";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { EASING } from "@/lib/easing";
+import useMediaQueries from "@/hook/useMediaQueries";
+import Image from "next/image";
 
 const dataMarkerMaps = [
   {
@@ -111,6 +113,15 @@ type ActiveMarker = {
 const CulturePark = () => {
   const [activeMarker, setActiveMarker] = useState<ActiveMarker | null>(null);
 
+  const queries = useMemo(
+    () => ({
+      isDesktop: "(min-width: 768px) and (orientation: landscape)",
+    }),
+    []
+  );
+
+  const { isDesktop } = useMediaQueries(queries);
+
   useGSAP(
     () => {
       if (activeMarker) {
@@ -140,13 +151,13 @@ const CulturePark = () => {
   );
 
   return (
-    <section className="w-full min-h-screen md:landscape:px-60 md:landscape:pt-100 bg-tropical-teal relative">
+    <section className="w-full md:landscape:min-h-1000 min-h-900 md:landscape:px-60 px-20 md:landscape:pt-100  md:landscape:pb-100 pt-60 bg-tropical-teal relative">
       <div className="w-full h-full">
-        <div className="split leading-none md:landscape:text-51d text-soft-snow font-perfectly-vintage w-full text-center md:landscape:">
+        <div className="split leading-none md:landscape:text-51d text-31d text-soft-snow font-perfectly-vintage w-full text-center md:landscape:">
           Cultural Park
         </div>
 
-        <div className="split md:landscape:w-768 md:landscape:mt-37 font-inter md:landscape:text-16d font-light text-center mx-auto text-white">
+        <div className="split md:landscape:w-768 md:landscape:mt-37 mt-24 font-inter md:landscape:text-16d text-14d font-light text-center mx-auto text-white">
           Discover the cultural heart of Bali at Garuda Wisnu Kencana (GWK).
           Home to one of the world’s tallest monumental statues, GWK offers a
           unique blend of Balinese heritage, cultural performances, scenic
@@ -154,12 +165,13 @@ const CulturePark = () => {
           or simply enjoy, your unforgettable Bali journey starts here.
         </div>
 
-        <div className="w-full flex justify-center md:landscape:mt-60">
-          <div className="md:landscape:w-714 md:landscape:h-632 relative">
+        <div className="w-full flex justify-center md:landscape:mt-60 mt-40">
+          <div className="md:landscape:w-714 md:landscape:h-632 relative w-full h-400">
             <GradientImage
               src={"/images/homepage/map-gwk.png"}
               priority
               unoptimized
+              className="max-xl:portrait:!object-contain"
             />
             {dataMarkerMaps.map((data, index) => (
               <MarkerMap
@@ -174,55 +186,112 @@ const CulturePark = () => {
 
         {/* popup */}
 
-        <div
-          className={cx(
-            "absolute top-300 w-292 left-60 rounded-15d overflow-hidden z-100 popup",
-            {
-              hidden: !activeMarker,
-            }
-          )}
-        >
-          <div className="w-full h-167 relative">
-            {activeMarker?.img && <GradientImage src={activeMarker?.img} />}
-            <div
-              className="w-37 h-37 rounded-full bg-white absolute right-13 top-13 flex justify-center items-center cursor-pointer"
-              onClick={() => setActiveMarker(null)}
-            >
-              <svg
-                className="w-24 h-24"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z"
-                  fill="black"
+        {isDesktop ? (
+          <div
+            className={cx(
+              "absolute top-300 w-292 left-60 rounded-15d overflow-hidden z-100 popup",
+              {
+                hidden: !activeMarker,
+              }
+            )}
+          >
+            <div className="w-full h-167 relative popup">
+              {activeMarker?.img && (
+                <Image
+                  src={activeMarker.img}
+                  fill
+                  alt="marker image"
+                  className="w-full h-full object-cover"
                 />
-              </svg>
+              )}
+              <div
+                className="w-37 h-37 rounded-full bg-white absolute right-13 top-13 flex justify-center items-center cursor-pointer"
+                onClick={() => setActiveMarker(null)}
+              >
+                <svg
+                  className="w-24 h-24"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z"
+                    fill="black"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="py-18 px-16 bg-white">
+              <h3 className="text-20d font-inter text-[#1C1917] leading-none">
+                {activeMarker?.title}
+              </h3>
+              <p className="font-light font-inter text-12d mt-12">
+                {activeMarker?.desc}
+              </p>
+              <div className="flex justify-center mt-42">
+                <Link href={"/"}>
+                  <div className="!w-219 !h-37 bg-[#F0B100] rounded-8d flex justify-center items-center font-inter font-bold text-14d text-[#FEFCE8]">
+                    SEE DETAILS
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
-          <div className="py-18 px-16 bg-white">
-            <h3 className="text-20d font-inter text-[#1C1917] leading-none">
-              {activeMarker?.title}
-            </h3>
-            <p className="font-light font-inter text-12d mt-12">
-              {activeMarker?.desc}
-            </p>
-            <div className="flex justify-center mt-42">
-              <Link href={"/"}>
-                <div className="!w-219 !h-37 bg-[#F0B100] rounded-8d flex justify-center items-center font-inter font-bold text-14d text-[#FEFCE8]">
-                  SEE DETAILS
+        ) : (
+          <div
+            className={cx(
+              "fixed w-screen h-screen top-0 px-20 left-0 flex justify-center items-center z-[1000] bg-black/50",
+              {
+                hidden: !activeMarker,
+              }
+            )}
+          >
+            <div className={cx(" rounded-15d overflow-hidden z-[1000] popup")}>
+              <div className="w-full h-167 relative">
+                {activeMarker?.img && <GradientImage src={activeMarker?.img} />}
+                <div
+                  className="w-37 h-37 rounded-full bg-white absolute right-13 top-13 flex justify-center items-center cursor-pointer"
+                  onClick={() => setActiveMarker(null)}
+                >
+                  <svg
+                    className="w-24 h-24"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z"
+                      fill="black"
+                    />
+                  </svg>
                 </div>
-              </Link>
+              </div>
+              <div className="py-18 px-16 bg-white">
+                <h3 className="text-20d font-inter text-[#1C1917] leading-none">
+                  {activeMarker?.title}
+                </h3>
+                <p className="font-light font-inter text-12d mt-12">
+                  {activeMarker?.desc}
+                </p>
+                <div className="flex justify-center mt-42">
+                  <Link href={"/"}>
+                    <div className="!w-219 !h-37 bg-[#F0B100] rounded-8d flex justify-center items-center font-inter font-bold text-14d text-[#FEFCE8]">
+                      SEE DETAILS
+                    </div>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* popup */}
 
-        <div className="absolute left-60 top-300 z-50">
+        <div className="absolute md:landscape:left-60 left-20 md:landscape:top-300 top-650 z-50">
           <div className="">
             <svg
               className="w-70 h-45 reveal inline-block"
@@ -260,17 +329,36 @@ const CulturePark = () => {
 
             <div className="mt-10">
               <div className="w-65 h-10 bg-[#A8509E] rounded-full reveal"></div>
-              <div className="split font-inter text-16d text-white mt-5">
+              <div className="split font-inter md:landscape:text-16d text-14d text-white mt-5">
                 FREE Shuttle Bus Route
               </div>
             </div>
             <div className="mt-15">
               <div className="w-65 h-10 bg-[#F36F21] rounded-full reveal"></div>
-              <div className="split font-inter text-16d text-white mt-5">
+              <div className="split font-inter md:landscape:text-16d text-14d text-white mt-5">
                 FREE Shuttle Bus Route
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="grid-cols-2 grid w-full mt-135 pb-60 gap-16 md:landscape:hidden">
+          {dataMarkerMaps.map((item, index) => (
+            <div
+              className="flex items-center gap-x-8"
+              onClick={() => setActiveMarker(item)}
+              key={index}
+            >
+              <div className="w-22 h-22 bg-[#4B3425] p-2 rounded-full flex items-center justify-center shadow-lg relative z-10">
+                <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
+                  <span className=" font-extrabold font-inter text-center text-10d text-[#4B3425]">
+                    {item.number}
+                  </span>
+                </div>
+              </div>
+              <div className="text-12d">{item.title}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

@@ -1,7 +1,11 @@
-import GradientImage from "@/components/ui/GradientImage";
-import ViewVideo from "@/components/ui/ViewVideo";
-import { cx } from "class-variance-authority";
+"use client";
 
+import GradientImage from "@/components/ui/GradientImage";
+
+import { cx } from "class-variance-authority";
+import { useMemo } from "react";
+import useMediaQueries from "@/hook/useMediaQueries";
+import ViewVideo from "@/components/ui/ViewVideo";
 const datas = [
   {
     img: "/images/balinese-cultural/image-3.png",
@@ -26,10 +30,17 @@ const datas = [
 ];
 
 const Section2 = () => {
+  const queries = useMemo(
+    () => ({
+      isDesktop: "(min-width: 768px) and (orientation: landscape)",
+    }),
+    []
+  );
+  const { isDesktop } = useMediaQueries(queries);
   return (
-    <section className="w-full min-h-screen bg-dark-forest-green relative overflow-hidden pb-160">
+    <section className="w-full min-h-screen bg-dark-forest-green relative overflow-hidden pb-160 max-xl:portrait:px-20">
       <div className="absolute !top-170 !-left-50">
-        <div className="relative w-455 h-161">
+        <div className="relative md:landscape:w-455 h-161">
           <GradientImage
             src="/ornament/kakul.png"
             className="!object-contain"
@@ -38,7 +49,7 @@ const Section2 = () => {
       </div>
 
       <div className="absolute  top-0 left-1/2 -translate-x-1/2">
-        <div className="relative w-512 h-512">
+        <div className="relative md:landscape:w-512 md:landscape:h-512 w-315 h-315">
           <GradientImage
             src="/ornament/flower-lotus.png"
             className="!object-contain"
@@ -47,7 +58,7 @@ const Section2 = () => {
       </div>
 
       <div className="absolute  !top-170 !-right-50">
-        <div className="relative w-455 h-161">
+        <div className="relative md:landscape:w-455 h-161">
           <GradientImage
             src="/ornament/kakul-2.png"
             className="!object-contain"
@@ -56,29 +67,29 @@ const Section2 = () => {
       </div>
 
       <div className="pt-130 relative z-10">
-        <div className="w-560 font-inter font-light text-17d mx-auto text-center text-[#FAFAFA] split">
+        <div className="md:landscape:w-560 font-inter font-light md:landscape:text-17d text-14d mx-auto text-center text-[#FAFAFA] split">
           Experience unforgettable dining at Jendela Bali, a restaurant with
           breathtaking views of Southern Bali, offering sweeping sights of the
           sea, city lights, and dramatic sunsets.
         </div>
 
-        <div className="aspect-video w-1055 relative mx-auto mt-40">
+        <div className="aspect-video md:landscape:w-1055 relative mx-auto mt-40">
           <div className="w-full h-full absolute top-0 left-0 bg-[#0E1F19] rotate-[3deg]"></div>
           <ViewVideo img="/images/balinese-cultural/section-2.png" />
         </div>
       </div>
 
-      <div className="mt-96 w-full flex flex-col gap-y-20 items-center">
-        <div className=" w-865 flex justify-between items-center reveal">
-          <div className="relative">
-            <div className="relative w-332 h-266 ">
+      <div className="mt-96 w-full flex flex-col md:landscape:gap-y-20 gap-y-60 items-center">
+        <div className="md:landscape:w-865 w-full flex md:landscape:flex-row flex-col max-xl:portrait:gap-y-24 md:landscape:justify-between items-center reveal">
+          <div className="relative max-xl:portrait:w-full max-xl:portrait:order-2">
+            <div className="relative md:landscape:w-332 md:landscape:h-266 w-full max-xl:portrait:aspect-video">
               <GradientImage
                 src="/images/balinese-cultural/image-1.png"
                 className="z-10"
               />
 
               <svg
-                className="w-319 h-14 absolute top-1/2 -translate-y-1/2 left-90"
+                className="w-319 h-14 absolute top-1/2 -translate-y-1/2 left-90 md:landscape:block hidden"
                 width="319"
                 height="14"
                 viewBox="0 0 319 14"
@@ -90,7 +101,7 @@ const Section2 = () => {
               </svg>
             </div>
             <div className="absolute top-0 left-1/2 -translate-x-1/2">
-              <div className="relative w-352 h-286">
+              <div className="relative md:landscape:w-332 md:landscape:h-266 w-full max-xl:portrait:aspect-video">
                 <GradientImage
                   src="/images/balinese-cultural/shadow.png"
                   className="top-0 left-0 rotate-[-3deg] !object-contain"
@@ -98,28 +109,28 @@ const Section2 = () => {
               </div>
             </div>
           </div>
-          <div className="w-423 font-inter font-light text-17d text-[#DCFCE7] split">
+          <div className="w-423 font-inter font-light text-14d md:landscape:text-17d text-[#DCFCE7] split">
             Make a wish by tossing a coin into the Turtle Pon at Plaza
             Kura-kura, where the statue of Dewi Laksmi stands gracefully at the
             center. A serene moment of hope and gratitude in the heart of GWK
             Cultural Park.
           </div>
         </div>
-        <div className=" w-865 flex justify-between items-center reveal">
-          <div className="w-423 font-inter font-light text-17d text-[#DCFCE7] text-center split">
+        <div className="md:landscape:w-865 w-full flex md:landscape:flex-row max-xl:portrait:gap-y-24 flex-col md:landscape:justify-between items-center reveal">
+          <div className="md:landscape:w-423 w-full font-inter font-light text-14d md:landscape:text-17d text-[#DCFCE7] md:landscape:text-center split">
             Capture the beauty of Balinese tradition with a photo beside a
             vibrant gebogan at Plaza Kura-Kura — a colorful symbol of devotion
             and culture.
           </div>
-          <div className="relative">
-            <div className="relative w-332 h-266">
+          <div className="relative max-xl:portrait:w-full">
+            <div className="relative md:landscape:w-332 md:landscape:h-266  max-xl:portrait:aspect-video w-full">
               <GradientImage
                 src="/images/balinese-cultural/image-1.png"
                 className="z-10"
               />
 
               <svg
-                className="w-319 h-14 absolute top-[75%] translate-y-1/2 right-250"
+                className="w-319 h-14 absolute top-[75%] translate-y-1/2 right-250 md:landscape:block hidden"
                 width="319"
                 height="14"
                 viewBox="0 0 319 14"
@@ -143,7 +154,7 @@ const Section2 = () => {
               </svg>
             </div>
             <div className="absolute top-0 left-1/2 -translate-x-1/2">
-              <div className="relative w-352 h-286">
+              <div className="relative md:landscape:w-332 md:landscape:h-266  max-xl:portrait:aspect-video w-full">
                 <GradientImage
                   src="/images/balinese-cultural/shadow.png"
                   className="top-0 left-0 rotate-[-3deg] !object-contain"
@@ -155,31 +166,35 @@ const Section2 = () => {
 
         {datas.map((data, index) => (
           <div
-            className=" w-865 flex justify-between items-center reveal"
+            className="md:landscape:w-865 w-full flex md:flex-row flex-col md:landscape:justify-between md:landscape:items-center reveal"
             key={index}
           >
             <div
               className={cx(
-                "w-423 font-inter font-light text-17d text-[#DCFCE7] text-center  split",
+                "md:landscape:w-423 w-full font-inter font-light text-14d md:landscape:text-17d text-[#DCFCE7] md:landscape:text-center  split",
                 {
-                  "order-2": index % 2 === 0,
-                  "order-1": index % 2 === 1,
+                  "order-2": index % 2 === 0 && isDesktop,
+                  "order-1": index % 2 === 1 && isDesktop,
                 }
               )}
             >
               {data.text}
             </div>
             <div
-              className={cx("relative ", {
-                "order-1": index % 2 === 0,
-                "order-2": index % 2 === 1,
+              className={cx("relative max-xl:portrait:mt-24", {
+                "order-1": index % 2 === 0 && isDesktop,
+                "order-2": index % 2 === 1 && isDesktop,
               })}
             >
-              <div className={"relative w-332 h-266"}>
+              <div
+                className={
+                  "relative md:landscape:w-332 md:landscape:h-266 w-full max-xl:portrait:aspect-video"
+                }
+              >
                 <GradientImage src={data.img} className="z-10" />
               </div>
               <div className="absolute top-0 left-1/2 -translate-x-1/2">
-                <div className="relative w-352 h-286">
+                <div className="relative md:landscape:w-332 md:landscape:h-266 w-full max-xl:portrait:aspect-video">
                   <GradientImage
                     src="/images/balinese-cultural/shadow.png"
                     className="top-0 left-0 rotate-[-3deg] !object-contain"

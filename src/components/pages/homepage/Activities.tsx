@@ -31,16 +31,16 @@ const dataActivities = [
 
 const Activities = () => {
   return (
-    <section className="w-full min-h-screen md:landscape:pt-100">
-      <div className="w-full h-full md:landscape:px-90">
-        <div className="split w-full font-perfectly-vintage md:landscape:text-45d text-golden-amber text-center leading-none">
+    <section className="w-full min-h-screen md:landscape:pt-100 pt-60">
+      <div className="w-full h-full md:landscape:px-90 px-20">
+        <div className="split w-full font-perfectly-vintage md:landscape:text-45d text-31d text-golden-amber text-center leading-none">
           Activities
         </div>
-        <div className="split w-full text-center font-inter md:landscape:text-15d font-light text-steel-navy">
+        <div className="split w-full text-center font-inter md:landscape:text-15d text-14d font-light mt-20 text-steel-navy">
           Explore the Cultural Richness of Bali at GWK
         </div>
 
-        <div className="grid md:landscape:grid-cols-3 gap-25 md:landscape:mt-44">
+        <div className="grid md:landscape:grid-cols-3 md:portrait:col-span-2 col-span-1 gap-25 md:landscape:mt-44 mt-32">
           {dataActivities.map((data, index) => (
             <div className="reveal" key={index}>
               <ImageCard alt={data.title} image={data.img} title={data.title} />
@@ -48,11 +48,11 @@ const Activities = () => {
           ))}
         </div>
 
-        <div className="w-full md:landscape:h-604 relative md:landscape:mt-52 reveal">
+        <div className="w-full md:landscape:h-604 h-300 relative md:landscape:mt-52 reveal">
           <GradientImage
             src="/images/homepage/banner.png"
             alt="Activities Background"
-            className="object-cover w-full h-full"
+            className="!object-contain w-full h-full"
           />
           <svg
             className="md:landscape:w-1200 md:landscape:h-67  absolute bottom-0 left-0 translate-y-[1%]"

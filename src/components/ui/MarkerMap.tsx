@@ -21,7 +21,7 @@ const MarkerMap = ({
       className={`absolute ${className}`}
       onClick={() => setActiveMarker(data)}
     >
-      <div className="relative flex flex-col items-center gap-y-4 group ">
+      <div className="relative  flex-col items-center gap-y-4 group md:landscape:flex hidden">
         <div className="relative z-20 bg-white rounded-full px-10 py-4 flex justify-center items-center opacity-0 group-hover:opacity-100">
           <span className="font-inter font-bold text-10d whitespace-nowrap">
             {data.title}

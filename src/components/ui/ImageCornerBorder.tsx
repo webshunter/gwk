@@ -1,90 +1,115 @@
 import Image from "next/image";
+import { useMemo } from "react";
 
+// Definisikan tipe props agar lebih jelas dan aman
 interface ImageCornerBorderProps {
   children: React.ReactNode;
   className?: string;
   padding?: string;
-  cornerSize?: number;
   topLeftImage?: string;
   topRightImage?: string;
   bottomLeftImage?: string;
   bottomRightImage?: string;
-  cornerOffset?: number;
   imageClassName?: string;
-  imageStyle?: React.CSSProperties;
+
+  cornerSize?: { mobile: number; tablet: number; desktop: number };
+  cornerOffset?: { mobile: number; tablet: number; desktop: number };
 }
 
 const ImageCornerBorder = ({
   children,
   className = "",
-  padding = "p-8",
-  cornerSize = 40,
+  padding = "p-6 sm:p-8 md:p-10",
   topLeftImage,
   topRightImage,
   bottomLeftImage,
   bottomRightImage,
-  cornerOffset = 16,
   imageClassName = "",
-  imageStyle = {},
+
+  cornerSize = { mobile: 25, tablet: 35, desktop: 45 },
+  cornerOffset = { mobile: 12, tablet: 16, desktop: 20 },
 }: ImageCornerBorderProps) => {
-  // Helper function to render a single corner image
-  const renderCornerImage = (
-    position: "topLeft" | "topRight" | "bottomLeft" | "bottomRight"
-  ) => {
-    let imageSrc;
-    const style: React.CSSProperties = {};
+  const corners = useMemo(
+    () => [
+      {
+        key: "topLeft",
+        src: topLeftImage,
+        positionClasses: "top-0 left-0",
 
-    // Determine the image source and position styles based on the corner
-    switch (position) {
-      case "topLeft":
-        imageSrc = topLeftImage;
-        style.top = `-${cornerOffset}px`;
-        style.left = `-${cornerOffset}px`;
-        break;
-      case "topRight":
-        imageSrc = topRightImage;
-        style.top = `-${cornerOffset}px`;
-        style.right = `-${cornerOffset}px`;
-        break;
-      case "bottomLeft":
-        imageSrc = bottomLeftImage;
-        style.bottom = `-${cornerOffset}px`;
-        style.left = `-${cornerOffset}px`;
-        break;
-      case "bottomRight":
-        imageSrc = bottomRightImage;
-        style.bottom = `-${cornerOffset}px`;
-        style.right = `-${cornerOffset}px`;
-        break;
-    }
-
-    if (!imageSrc) return null;
-
-    return (
-      <div className="absolute z-10" style={style}>
-        <Image
-          src={imageSrc}
-          alt={`Corner decoration ${position}`}
-          width={cornerSize}
-          height={cornerSize}
-          className={`object-contain ${imageClassName}`}
-          style={imageStyle}
-          priority={false}
-          quality={90}
-        />
-      </div>
-    );
-  };
+        style: {
+          transform: `translate(-${cornerOffset.mobile}px, -${cornerOffset.mobile}px)`,
+          "--tablet-transform": `translate(-${cornerOffset.tablet}px, -${cornerOffset.tablet}px)`,
+          "--desktop-transform": `translate(-${cornerOffset.desktop}px, -${cornerOffset.desktop}px)`,
+        },
+      },
+      {
+        key: "topRight",
+        src: topRightImage,
+        positionClasses: "top-0 right-0",
+        style: {
+          transform: `translate(${cornerOffset.mobile}px, -${cornerOffset.mobile}px)`,
+          "--tablet-transform": `translate(${cornerOffset.tablet}px, -${cornerOffset.tablet}px)`,
+          "--desktop-transform": `translate(${cornerOffset.desktop}px, -${cornerOffset.desktop}px)`,
+        },
+      },
+      {
+        key: "bottomLeft",
+        src: bottomLeftImage,
+        positionClasses: "bottom-0 left-0",
+        style: {
+          transform: `translate(-${cornerOffset.mobile}px, ${cornerOffset.mobile}px)`,
+          "--tablet-transform": `translate(-${cornerOffset.tablet}px, ${cornerOffset.tablet}px)`,
+          "--desktop-transform": `translate(-${cornerOffset.desktop}px, ${cornerOffset.desktop}px)`,
+        },
+      },
+      {
+        key: "bottomRight",
+        src: bottomRightImage,
+        positionClasses: "bottom-0 right-0",
+        style: {
+          transform: `translate(${cornerOffset.mobile}px, ${cornerOffset.mobile}px)`,
+          "--tablet-transform": `translate(${cornerOffset.tablet}px, ${cornerOffset.tablet}px)`,
+          "--desktop-transform": `translate(${cornerOffset.desktop}px, ${cornerOffset.desktop}px)`,
+        },
+      },
+    ],
+    [
+      topLeftImage,
+      topRightImage,
+      bottomLeftImage,
+      bottomRightImage,
+      cornerOffset,
+    ]
+  );
 
   return (
     <div className={`relative ${padding} ${className}`}>
-      {/* Corner Images */}
-      {renderCornerImage("topLeft")}
-      {renderCornerImage("topRight")}
-      {renderCornerImage("bottomLeft")}
-      {renderCornerImage("bottomRight")}
+      {corners.map((corner) =>
+        corner.src ? (
+          <div
+            key={corner.key}
+            className={`absolute z-10 ${corner.positionClasses} 
+              // Terapkan transform responsif menggunakan CSS variable
+              sm:[transform:var(--tablet-transform)] 
+              md:[transform:var(--desktop-transform)]`}
+            style={corner.style}
+          >
+            <Image
+              src={corner.src}
+              alt={`Corner decoration ${corner.key}`}
+              className={`object-contain ${imageClassName}
+                w-[${cornerSize.mobile}px] h-[${cornerSize.mobile}px]
+                sm:w-[${cornerSize.tablet}px] sm:h-[${cornerSize.tablet}px]
+                md:w-[${cornerSize.desktop}px] md:h-[${cornerSize.desktop}px]
+              `}
+              width={cornerSize.desktop}
+              height={cornerSize.desktop}
+            />
+          </div>
+        ) : null
+      )}
 
-      <div className="relative z-20">{children}</div>
+      <div className="relative">{children}</div>
     </div>
   );
 };

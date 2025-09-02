@@ -60,20 +60,20 @@ const datas = [
 
 const Package = () => {
   return (
-    <section className="w-full pt-84 px-80">
+    <section className="w-full pt-84 md:landscape:px-80 px-20">
       <div className="w-full">
         <div className="w-full flex flex-col items-center">
           <div className="split font-perfectly-vintage text-41 text-[#292524]">
             Packages
           </div>
-          <div className="split font-inter text-17d font-light mt-15 w-631 text-center text-[#737373]">
+          <div className="split font-inter text-17d font-light mt-15 md:landscape:w-631 text-center text-[#737373]">
             Discover flexible wedding packages tailored to your needs, offering
             unforgettable moments with exceptional value to suit every style and
             budget.
           </div>
         </div>
 
-        <div className="w-full grid grid-cols-4 gap-x-15 mt-37">
+        <div className="w-full grid md:landscape:grid-cols-4 gap-x-15 mt-37 gap-y-25">
           {datas.map((data, index) => (
             <div
               className="w-full p-25 border border-[#E2E8F0] rounded-10d min-h-669"

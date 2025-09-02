@@ -54,10 +54,10 @@ const navLink2 = [
 
 const Footer = () => {
   return (
-    <footer className="w-full h-screen md:landscape:px-75 flex items-center relative">
-      <div className="w-full flex items-center md:landscape:gap-x-222 my-auto">
-        <div className="md:landscape:w-353">
-          <div className="md:landscape:w-194 md:landscape:h-129 relative reveal">
+    <footer className="w-full md:landscape:h-screen md:landscape:px-75 px-20 flex items-center relative">
+      <div className="w-full flex md:landscape:items-center max-xl:portrait:flex-col md:landscape:gap-x-222 my-auto">
+        <div className="md:landscape:w-353 w-full max-xl:portrait:flex max-xl:portrait:flex-col max-xl:portrait:items-center">
+          <div className="md:landscape:w-194 w-194 h-129 md:landscape:h-129 relative reveal">
             <GradientImage
               src="/images/footer/logo.png"
               alt="Footer Background"
@@ -65,7 +65,7 @@ const Footer = () => {
             />
           </div>
 
-          <div className="split md:landscape:mt-32 font-inter font-light md:landscape:text-13d text-black">
+          <div className="split md:landscape:mt-32 mt-24 font-inter font-light md:landscape:text-13d text-14d text-black">
             PT. Alam Sutera Realty Tbk ("the Company") is an integrated property
             developer company that prioritize innovation to fulfill a quality
             living. The business activities are focused on the development as
@@ -75,25 +75,25 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex md:landscape:gap-x-222 self-end">
-          <div className="flex flex-col md:landscape:gap-y-10 ">
+        <div className="flex md:landscape:gap-x-222 md:landscape:self-end max-xl:portrait:justify-between max-xl:portrait:mt-24">
+          <div className="flex flex-col md:landscape:gap-y-10 gap-y-10 ">
             {navLink1.map((data, index) => (
               <Link
                 href={data.href}
                 key={index}
-                className="split font-inter font-light md:landscape:text-13d text-black"
+                className="split font-inter font-light md:landscape:text-13d text-14d text-black"
               >
                 {data.title}
               </Link>
             ))}
           </div>
 
-          <div className="flex flex-col md:landscape:gap-y-10 ">
+          <div className="flex flex-col md:landscape:gap-y-10 gap-y-10">
             {navLink2.map((data, index) => (
               <Link
                 href={data.href}
                 key={index}
-                className="split font-inter font-light md:landscape:text-13d text-black"
+                className="split font-inter font-light md:landscape:text-13d text-14d text-black"
               >
                 {data.title}
               </Link>
@@ -101,7 +101,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="w-full absolute bottom-30 left-0 flex flex-col gap-y-25 items-center ">
+        <div className="w-full md:landscape:absolute bottom-30 left-0 flex flex-col gap-y-25 items-center max-xl:portrait:mt-24 mt-24">
           <div>
             <div className="flex gap-x-16 items-center justify-center reveal">
               <a
@@ -184,7 +184,7 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          <div className="font-inter font-light text-13d split">
+          <div className="font-inter font-light md:landscape:text-13d text-14d split text-center">
             &copy; All rights reserved - Garuda Wisnu Kencana Cultural Park
           </div>
         </div>

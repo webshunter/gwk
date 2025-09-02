@@ -47,18 +47,16 @@ const FestivalSection = () => {
       </div>
 
       <div className="text-center mt-20">
-        <div className="relative inline-block mb-8">
-          <div className="relative">
-            <div className="w-full  mx-auto bg-white p-4">
-              <div className="relative w-1227 h-817">
-                <Image
-                  src="/images/mice-event/ogoh-ogoh/Mask group (4).png"
-                  alt="Ogoh Ogoh Festival - Traditional Balinese ceremony with mythological figures"
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
+        <div className="relative w-full max-w-4xl mx-auto mb-8">
+          <div className="relative bg-white p-2 md:p-4 rounded-lg shadow-md">
+            <div className="relative w-full aspect-[3/2]">
+              <Image
+                src="/images/mice-event/ogoh-ogoh/Mask group (4).png"
+                alt="Ogoh Ogoh Festival - Traditional Balinese ceremony with mythological figures"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
           </div>
         </div>
@@ -79,13 +77,15 @@ const FestivalSection = () => {
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-10 mt-30">
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 mt-12 md:mt-16 lg:mt-20">
         {imageOgohOgoh.map((item, index) => (
           <ImageCard
             image={item}
             alt="ogoh"
             key={index}
-            className="w-300 h-252"
+            // PERBAIKAN: Ukuran kartu dibuat responsif
+            className="w-full aspect-square" // aspect-square (1:1) atau aspect-[4/3]
           />
         ))}
       </div>
