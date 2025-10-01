@@ -183,6 +183,9 @@
   position: sticky;
   top: 0;
   z-index: 40;
+  width: 100%;
+  margin: 0;
+  gap: 16px;
 }
 
 .admin-breadcrumb {
@@ -1061,6 +1064,34 @@
   cursor: not-allowed;
 }
 
+.admin-button-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  color: #a0aec0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 12px;
+}
+
+.admin-button-back:hover {
+  background: #4a5568;
+  color: white;
+  border-color: #805ad5;
+  transform: translateX(-2px);
+}
+
+.admin-button-back .admin-button-icon {
+  width: 20px;
+  height: 20px;
+}
+
 .admin-button-secondary {
   display: flex;
   align-items: center;
@@ -1103,6 +1134,12 @@
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.admin-create-page-title {
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 
 .admin-create-page-title h1 {

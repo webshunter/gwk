@@ -24,8 +24,10 @@ import {
   Menu,
   X,
   Edit,
-  Eye
+  Eye,
+  LogOut
 } from "lucide-react"
+import SignOutButton from "./SignOutButton"
 
 // Component for Recent Pages Table
 function RecentPagesTable() {
@@ -285,7 +287,7 @@ export default function AdminPage() {
             <button className="admin-header-btn">
               <Sun className="admin-nav-icon" />
             </button>
-            <div className="admin-avatar">GW</div>
+            <SignOutButton />
           </div>
         </header>
 

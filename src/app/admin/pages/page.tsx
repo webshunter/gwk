@@ -12,7 +12,8 @@ import {
   MoreVertical,
   FileText,
   Calendar,
-  User
+  User,
+  ArrowLeft
 } from "lucide-react"
 import "../design/custom-admin.css"
 
@@ -102,8 +103,17 @@ export default function PagesManagement() {
       {/* Header */}
       <div className="admin-create-page-header">
         <div className="admin-create-page-title">
-          <h1>Manajemen Halaman</h1>
-          <p>Kelola halaman website GWK Cultural Park</p>
+          <button
+            onClick={() => router.push('/admin')}
+            className="admin-button-back"
+            title="Kembali ke Dashboard"
+          >
+            <ArrowLeft className="admin-button-icon" />
+          </button>
+          <div>
+            <h1>Manajemen Halaman</h1>
+            <p>Kelola halaman website GWK Cultural Park</p>
+          </div>
         </div>
         <button 
           onClick={handleCreatePage}
