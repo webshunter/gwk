@@ -1,23 +1,16 @@
 # GWK Project
 
-## Supabase Auth Setup
+## Admin Authentication
 
-The custom admin area (`/admin`) now uses Supabase for authentication. Follow these steps before running the app locally:
+The custom admin area (`/admin`) now uses a lightweight JWT-based login without any Supabase dependency. Credentials are **no longer hard-coded**; you must provide them through environment variables in `.env.local`:
 
-1. Create a Supabase project and enable the **Email / Password** provider.
-2. Copy the API values from **Settings → API** and add them to `.env.local`:
+```bash
+ADMIN_EMAIL="admin@example.com"
+ADMIN_PASSWORD="super-secure-password"
+JWT_SECRET="random-jwt-secret"
+```
 
-	```bash
-	NEXT_PUBLIC_SUPABASE_URL=your-project-url
-	NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-	SUPABASE_SERVICE_ROLE=optional-service-role-key
-	```
-
-	The service role key is only required if you plan to seed or manage users programmatically.
-
-3. Add at least one admin user from **Authentication → Users** and set a password manually (disable public sign-ups if the admin is private).
-
-4. Restart the dev server after updating environment variables.
+All deployments (including local development) require these values. The server will throw a clear error if either `ADMIN_EMAIL` or `ADMIN_PASSWORD` is missing.
 
 ## Development
 
@@ -26,4 +19,4 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000/admin/login` to sign in with the Supabase credentials.
+Visit `http://localhost:3000/admin/login` and sign in using the credentials defined in your environment file.

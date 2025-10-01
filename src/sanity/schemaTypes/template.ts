@@ -24,14 +24,6 @@ export const template = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'heroImage',
-      title: 'Hero Image',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
-    }),
-    defineField({
       name: 'summary',
       title: 'Summary',
       type: 'text',
@@ -61,14 +53,23 @@ export const template = defineType({
           title: 'Testimonial Section',
           type: 'testimonialSection',
         }),
+        defineArrayMember({
+          name: 'mapSection',
+          title: 'Map Section',
+          type: 'mapSection',
+        }),
+        defineArrayMember({
+          name: 'activitySection',
+          title: 'Activity Section',
+          type: 'activitySection',
+        }),
+        defineArrayMember({
+          name: 'contentSection1',
+          title: 'Content Section 1',
+          type: 'contentSection1',
+        }),
       ],
       validation: (rule) => rule.min(1).warning('Sebaiknya tambahkan minimal satu modul.'),
-    }),
-    defineField({
-      name: 'content',
-      title: 'Content',
-      type: 'array',
-      of: [{type: 'block'}],
     }),
   ],
 })

@@ -68,7 +68,7 @@ const FestivalSection = () => {
         <div className="max-w-4xl mx-auto">
           <p className="text-gray-700 text-lg leading-relaxed font-light">
             The Ogoh-Ogoh Festival At GWK Cultural Park Is Held Annually After
-            Nyepi, Bali's Day Of Silence. The Event Features Towering,
+            Nyepi, Bali&apos;s Day Of Silence. The Event Features Towering,
             Artistically Crafted Ogoh-Ogoh Figures Paraded Through The Park In A
             Celebration That Honors Tradition, Creativity, And Cultural
             Reflection. Set Against The Iconic Garuda Wisnu Kencana Statue, The

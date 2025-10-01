@@ -67,9 +67,12 @@ const ritualExperiences = [
   }
 ];
 
+const tabs = ["overview", "details", "booking"] as const;
+type RitualTab = (typeof tabs)[number];
+
 const RitualExperience = () => {
   const [selectedRitual, setSelectedRitual] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'details' | 'booking'>('overview');
+  const [activeTab, setActiveTab] = useState<RitualTab>("overview");
 
   return (
     <section className="w-full min-h-screen bg-gradient-to-b from-amber-50 to-white py-100">
@@ -167,7 +170,7 @@ const RitualExperience = () => {
                 <div className="border-t border-gray-200">
                   {/* Tabs */}
                   <div className="flex border-b border-gray-200">
-                    {['overview', 'details', 'booking'].map((tab) => (
+                    {tabs.map((tab) => (
                       <button
                         key={tab}
                         className={`flex-1 py-20 font-inter font-medium transition-colors duration-300 ${
@@ -175,7 +178,7 @@ const RitualExperience = () => {
                             ? 'text-tropical-teal border-b-2 border-tropical-teal'
                             : 'text-steel-navy hover:text-tropical-teal'
                         }`}
-                        onClick={() => setActiveTab(tab as any)}
+                        onClick={() => setActiveTab(tab)}
                       >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
                       </button>
@@ -187,7 +190,7 @@ const RitualExperience = () => {
                     {activeTab === 'overview' && (
                       <div className="space-y-20">
                         <h4 className="font-inter font-semibold text-18d text-steel-navy">
-                          What's Included
+                          What&apos;s Included
                         </h4>
                         <div className="grid grid-cols-2 gap-15">
                           {ritual.includes.map((item, index) => (
@@ -224,7 +227,7 @@ const RitualExperience = () => {
                               <li>• Comfortable clothing</li>
                               <li>• Respectful attitude</li>
                               <li>• Camera (if allowed)</li>
-                              <li>• Open mind and heart</li>
+                              <li>&bull; Open mind and heart</li>
                             </ul>
                           </div>
                         </div>

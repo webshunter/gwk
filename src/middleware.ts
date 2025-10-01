@@ -1,45 +1,43 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-import { createServerClient } from "@supabase/ssr"
+import { NextResponse, type NextRequest } from "next/server"
+import { verifyToken } from "@/lib/auth"
 
 const ADMIN_LOGIN_PATH = "/admin/login"
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  const { pathname } = req.nextUrl
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
 
-  if (pathname.startsWith(ADMIN_LOGIN_PATH)) {
-    return res
+  // Skip authentication for login page and public assets
+  if (
+    pathname.startsWith(ADMIN_LOGIN_PATH) ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api/auth") ||
+    pathname.includes("/studio") ||
+    !pathname.startsWith("/admin")
+  ) {
+    return NextResponse.next()
   }
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return req.cookies.getAll().map(({ name, value }) => ({ name, value }))
-        },
-        setAll(cookies) {
-          cookies.forEach(({ name, value, options }) => {
-            res.cookies.set({ name, value, ...options })
-          })
-        },
-      },
-    }
-  )
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+  // Check for JWT token in cookie
+  const token = request.cookies.get("admin-token")?.value
 
-  if (!session) {
-    const signInUrl = req.nextUrl.clone()
-    signInUrl.pathname = ADMIN_LOGIN_PATH
-    signInUrl.searchParams.set("callbackUrl", req.nextUrl.pathname + req.nextUrl.search)
-    return NextResponse.redirect(signInUrl)
+  if (!token) {
+    const loginUrl = new URL(ADMIN_LOGIN_PATH, request.url)
+    loginUrl.searchParams.set("callbackUrl", pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
-  return res
+  // Verify JWT token
+  const user = await verifyToken(token)
+  
+  if (!user) {
+    // Invalid token, redirect to login
+    const response = NextResponse.redirect(new URL(ADMIN_LOGIN_PATH, request.url))
+    response.cookies.delete("admin-token")
+    return response
+  }
+
+  // Valid token, allow access
+  return NextResponse.next()
 }
 
 export const config = {

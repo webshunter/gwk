@@ -1,7 +1,7 @@
 import ImageCornerBorder from "@/components/ui/ImageCornerBorder";
 import { Clock } from "lucide-react";
 const features = [
-  "Animated tale of Garuda Wisnu Kencana's",
+  "Animated tale of the Garuda Wisnu Kencana statue",
   "GWK Statue Construction Process",
   "Interactive Wall",
   "Panoramic Window",
@@ -25,7 +25,7 @@ export default function HeroTime() {
               {/* Left Column */}
               <div className="order-1">
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-                  What's Inside 9th and 23th floor of the GWK Statue?
+                  What&apos;s Inside 9th and 23th floor of the GWK Statue?
                 </h1>
 
                 <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 sm:mb-8">

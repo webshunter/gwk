@@ -66,7 +66,7 @@ const Footer = () => {
           </div>
 
           <div className="split md:landscape:mt-32 mt-24 font-inter font-light md:landscape:text-13d text-14d text-black">
-            PT. Alam Sutera Realty Tbk ("the Company") is an integrated property
+            PT. Alam Sutera Realty Tbk (&ldquo;the Company&rdquo;) is an integrated property
             developer company that prioritize innovation to fulfill a quality
             living. The business activities are focused on the development as
             well as management of residential areas, commercial districts; and

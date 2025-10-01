@@ -1,20 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+
+export type MarkerData = {
+  title: string;
+  number: string;
+  img: string;
+  desc: string;
+};
 
 const MarkerMap = ({
   data,
   className,
   setActiveMarker,
 }: {
-  data: {
-    title: string;
-    number: string;
-    img: string;
-    desc: string;
-  };
+  data: MarkerData;
   className: string;
-  setActiveMarker: React.Dispatch<React.SetStateAction<any>>;
+  setActiveMarker: Dispatch<SetStateAction<MarkerData | null>>;
 }) => {
   return (
     <div

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import GradientImage from "@/components/ui/GradientImage";
-import MarkerMap from "@/components/ui/MarkerMap";
+import MarkerMap, { type MarkerData } from "@/components/ui/MarkerMap";
 import Link from "next/link";
 import { cx } from "class-variance-authority";
 import { gsap, useGSAP } from "@/lib/gsap";
@@ -104,14 +104,8 @@ const dataMarkerMaps = [
   },
 ];
 
-type ActiveMarker = {
-  title: string;
-  img: string;
-  desc: string;
-};
-
 const CulturePark = () => {
-  const [activeMarker, setActiveMarker] = useState<ActiveMarker | null>(null);
+  const [activeMarker, setActiveMarker] = useState<MarkerData | null>(null);
 
   const queries = useMemo(
     () => ({
@@ -159,9 +153,9 @@ const CulturePark = () => {
 
         <div className="split md:landscape:w-768 md:landscape:mt-37 mt-24 font-inter md:landscape:text-16d text-14d font-light text-center mx-auto text-white">
           Discover the cultural heart of Bali at Garuda Wisnu Kencana (GWK).
-          Home to one of the world’s tallest monumental statues, GWK offers a
+          Home to one of the world&apos;s tallest monumental statues, GWK offers a
           unique blend of Balinese heritage, cultural performances, scenic
-          dining, and breathtaking views. Whether you're here to explore, learn,
+          dining, and breathtaking views. Whether you&apos;re here to explore, learn,
           or simply enjoy, your unforgettable Bali journey starts here.
         </div>
 

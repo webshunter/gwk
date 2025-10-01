@@ -1,0 +1,97 @@
+---
+alwaysApply: true
+---
+Kamu adalah asisten coding untuk project GWK Admin.
+Ikuti aturan berikut dengan sangat ketat:
+
+====================================================
+🔧 GENERAL CODING RULES
+====================================================
+1. Code harus clean, mudah dibaca, dan mengikuti best practice Next.js 15.4.5 + React 19.1.0.
+2. Gunakan TypeScript sepenuhnya.
+3. Penamaan variabel, fungsi, dan komponen harus deskriptif.
+4. Jangan ada duplikasi kode — buat fungsi/komponen reusable.
+5. Tambahkan komentar di bagian kode yang kompleks.
+6. Semua perubahan signifikan harus dicatat di `CHANGELOG.md`.
+7. Jangan buat file testing tambahan kecuali diminta.
+8. Tangani error dengan baik dan log ke folder `./log/`.
+
+====================================================
+🎨 STYLING RULES
+====================================================
+1. Gunakan **custom CSS modular** per komponen.
+   - Simpan CSS di `/src/app/admin/design/` atau dalam subfolder `design/` sesuai komponen.
+   - Jangan gunakan Tailwind, Bootstrap, atau framework CSS lainnya.
+2. CSS harus konsisten, mudah di-maintain, dan tidak bentrok dengan global style (`globals.css`).
+3. Gunakan className yang jelas, misalnya: `.admin-form`, `.section-hero`, `.section-map`.
+
+====================================================
+🛠️ ADMIN PANEL REQUIREMENTS
+====================================================
+Lokasi: `/src/app/admin/`
+
+1. **Dashboard (page.tsx)**  
+   - Menampilkan daftar halaman (fetch dari Sanity).
+   - Tombol "Create Page" → redirect ke `/admin/pages/create`.
+   - Link edit → `/admin/pages/edit/[id]`.
+
+2. **Create Page (/admin/pages/create/)**  
+   - Form input: title, slug (auto-generate dari title), summary.  
+   - Section builder dinamis: user bisa add `Hero`, `Feature`, `Testimonial`.  
+   - Tiap section harus punya form modular:
+     - `HeroSectionForm.tsx`
+     - `FeatureSectionForm.tsx`
+     - `TestimonialSectionForm.tsx`
+   - Button "Save" → POST ke `/api/pages`.
+
+3. **Edit Page (/admin/pages/edit/[id]/)**  
+   - Fetch data dari Sanity berdasarkan ID.
+   - Pre-fill form (title, summary, sections).
+   - Bisa add/remove/edit section.
+   - Button "Update" → PATCH ke `/api/pages/[id]`.
+
+4. **Section Builder**
+   - Gunakan drag & drop dari `@dnd-kit`.
+   - Section didefinisikan di `sectionPresets.ts`.
+   - Buat komponen `SectionRenderer.tsx` untuk menampilkan form sesuai tipe section.
+   - Pastikan urutan section bisa diubah.
+
+====================================================
+📡 API REQUIREMENTS
+====================================================
+Lokasi: `/src/app/api/pages/`
+
+1. `api/pages/route.ts`
+   - GET → list semua halaman
+   - POST → create page baru
+
+2. `api/pages/[id]/route.ts`
+   - GET → detail page
+   - PATCH → update page
+   - DELETE → hapus page
+
+3. Semua API harus pakai `@sanity/client` (dengan token WRITE).
+4. Tangani error dengan try/catch → log ke `./log/gwk-error.log`.
+
+====================================================
+🔐 SECURITY RULES
+====================================================
+1. Semua route `/admin` harus dilindungi dengan NextAuth (JWT).
+2. Validasi input di server sebelum kirim ke Sanity.
+3. Pastikan file upload aman dan disimpan di Sanity sesuai schema.
+
+====================================================
+🚀 DEPLOYMENT
+====================================================
+1. Project jalan dengan **PM2**, jangan tambahkan script start lain.
+2. Logging diarahkan ke:
+   - `./log/gwk-out.log`
+   - `./log/gwk-error.log`
+   - `./log/gwk-combined.log`
+
+====================================================
+📑 DOCUMENTATION
+====================================================
+1. Tambahkan komentar singkat dalam kode jika ada bagian rumit.
+2. Catat perubahan signifikan di `CHANGELOG.md`.
+3. Jangan buat dokumentasi tambahan berlebihan dalam `.md` files.

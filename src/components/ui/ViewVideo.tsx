@@ -3,9 +3,11 @@ import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export default function ViewVideo({
-  img = "/images/top-of-statue-tour/wisnu.png",
-}) {
+type ViewVideoProps = {
+  img?: string;
+};
+
+export default function ViewVideo({ img = "/images/top-of-statue-tour/wisnu.png" }: ViewVideoProps) {
   const [showVideoPopup, setShowVideoPopup] = useState(false);
 
   const openVideoPopup = () => {
@@ -21,8 +23,8 @@ export default function ViewVideo({
       closeVideoPopup();
     };
 
-    const handleKeyDown = (e: any) => {
-      if (e.key === "Escape") {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
         handleEscapeKey();
       }
     };
@@ -43,10 +45,13 @@ export default function ViewVideo({
       <div className="w-full px-4 sm:px-6 md:px-8">
         <div className="w-full flex justify-center items-center mx-auto">
           <div className="relative aspect-video rounded-lg overflow-hidden w-full max-w-full sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl cursor-pointer group">
-            <img
+            <Image
               src={img}
               alt="Video Thumbnail"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 60vw"
+              priority={false}
             />
 
             <button

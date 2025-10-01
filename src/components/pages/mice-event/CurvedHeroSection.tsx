@@ -13,7 +13,7 @@ const CurvedHeroSection = () => {
             <p className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed font-light tracking-wide">
               <span className="block md:hidden">
                 From vibrant festivals to corporate gatherings, GWK offers a
-                unique venue surrounded by Bali's heritage.
+                unique venue surrounded by Bali&apos;s heritage.
               </span>
 
               <span className="hidden md:block">
@@ -21,7 +21,7 @@ const CurvedHeroSection = () => {
                 <br />
                 gatherings, GWK offers a one-of-a-kind venue surrounded by
                 <br />
-                Bali's majestic heritage.
+                Bali&apos;s majestic heritage.
               </span>
             </p>
           </div>

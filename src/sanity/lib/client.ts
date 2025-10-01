@@ -7,5 +7,16 @@ export const client = createClient({
   dataset,
   apiVersion,
   token, // Add the token for authentication
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  useCdn: false, // Set to false for write operations
+  perspective: 'published', // Use published perspective for read operations
+})
+
+// Create a separate client for write operations
+export const writeClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  token,
+  useCdn: false,
+  perspective: 'raw', // Use raw perspective for write operations
 })

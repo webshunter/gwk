@@ -15,8 +15,8 @@ export default function HeroVideo() {
             </h1>
             <p className="text-white text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed drop-shadow-lg">
               A unique tour inside the statue to the 9th and 23rd floor,
-              featuring breathtaking views of Bali's southern coast and
-              exhibitions showcasing the statue's creation
+              featuring breathtaking views of Bali&apos;s southern coast and
+              exhibitions showcasing the statue&apos;s creation
             </p>
           </div>
 

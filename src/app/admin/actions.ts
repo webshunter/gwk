@@ -2,29 +2,40 @@
 
 import { revalidatePath } from "next/cache"
 
-import { requireSupabaseSession } from "@/lib/supabase/server"
 import { serverClient } from "@/sanity/lib/serverClient"
+import { requireAdmin } from "@/lib/adminSession"
 
 import { sectionFactories, type SectionPayload, type SectionType } from "./sectionPresets"
 
 export async function listPages() {
-  await requireSupabaseSession()
+  await requireAdmin()
 
-  const docs = await serverClient.fetch<Array<{ _id: string; title: string; slug?: { current: string } }>>(
-    `*[_type == "template"] | order(_createdAt desc){ _id, title, slug }`
-  )
-  return docs
+  console.info("listPages: fetching template documents from Sanity")
+  try {
+    const docs = await serverClient.fetch<Array<{ _id: string; title: string; slug?: { current: string } }>>(
+      `*[_type == "template"] | order(_createdAt desc){ _id, title, slug }`
+    )
+    return docs
+  } catch (error) {
+    console.error("Failed to list Sanity pages", error)
+    throw error
+  }
 }
 
 export async function getPage(id: string) {
-  await requireSupabaseSession()
+  await requireAdmin()
+  console.info("getPage: fetching Sanity document", { id })
+  try {
+    const doc = await serverClient.fetch(
+      `*[_type == "template" && _id == $id][0]{ _id, title, slug, summary, sections }`,
+      { id }
+    )
 
-  const doc = await serverClient.fetch(
-    `*[_type == "template" && _id == $id][0]{ _id, title, slug, summary, sections }`,
-    { id }
-  )
-
-  return doc
+    return doc
+  } catch (error) {
+    console.error("Failed to fetch Sanity page", { id, error })
+    throw error
+  }
 }
 
 export async function createPage({
@@ -34,7 +45,9 @@ export async function createPage({
   title: string
   slug: string
 }) {
-  await requireSupabaseSession()
+  await requireAdmin()
+
+  console.info("createPage: Starting page creation", { title, slug })
 
   const doc = {
     _type: "template",
@@ -47,14 +60,19 @@ export async function createPage({
     sections: [],
   }
 
-  const created = await serverClient.create(doc)
-  revalidatePath("/admin")
-  return created
+  try {
+    const created = await serverClient.create(doc)
+    console.info("createPage: Successfully created page", { _id: created._id, title })
+    revalidatePath("/admin")
+    return created
+  } catch (error) {
+    console.error("createPage: Failed to create page", { title, slug, error })
+    throw error
+  }
 }
 
 export async function addSection(pageId: string, type: SectionType) {
-  await requireSupabaseSession()
-
+  await requireAdmin()
   const sectionFactory = sectionFactories[type]
   if (!sectionFactory) {
     throw new Error(`Unsupported section type: ${type}`)
@@ -66,26 +84,22 @@ export async function addSection(pageId: string, type: SectionType) {
     .patch(pageId)
     .setIfMissing({ sections: [] })
     .append("sections", [newSection])
-  .commit({ returnDocuments: true })
+    .commit({ returnDocuments: true })
 
   revalidatePath("/admin")
   return result
 }
 
 export async function updateSections(pageId: string, sections: SectionPayload[]) {
-  await requireSupabaseSession()
+  await requireAdmin()
 
-  await serverClient
-    .patch(pageId)
-    .set({ sections })
-    .commit()
+  await serverClient.patch(pageId).set({ sections }).commit()
 
   revalidatePath("/admin")
 }
 
 export async function updatePageMeta(pageId: string, data: { title?: string; summary?: string; slug?: string }) {
-  await requireSupabaseSession()
-
+  await requireAdmin()
   const patch: Record<string, unknown> = {}
 
   if (data.title !== undefined) patch.title = data.title
@@ -103,7 +117,7 @@ export async function updatePageMeta(pageId: string, data: { title?: string; sum
 }
 
 export async function deletePage(pageId: string) {
-  await requireSupabaseSession()
+  await requireAdmin()
 
   await serverClient.delete(pageId)
   revalidatePath("/admin")
