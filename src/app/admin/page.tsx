@@ -22,31 +22,183 @@ import {
   Calendar,
   PieChart,
   Menu,
-  X
+  X,
+  Edit,
+  Eye
 } from "lucide-react"
+
+// Component for Recent Pages Table
+function RecentPagesTable() {
+  const [pages, setPages] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    const fetchPages = async () => {
+      try {
+        const response = await fetch('/api/pages')
+        if (response.ok) {
+          const data = await response.json()
+          // Sort by update date and take first 5
+          const sortedPages = data.sort((a: any, b: any) => 
+            new Date(b._updatedAt).getTime() - new Date(a._updatedAt).getTime()
+          ).slice(0, 5)
+          setPages(sortedPages)
+        }
+      } catch (error) {
+        console.error('Error fetching pages:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPages()
+  }, [])
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  if (loading) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', color: '#9ca3af' }}>
+        Loading...
+      </div>
+    )
+  }
+
+  if (pages.length === 0) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center' }}>
+        <FileText size={48} style={{ color: '#6b7280', margin: '0 auto 16px' }} />
+        <p style={{ color: '#9ca3af' }}>Belum ada halaman. Buat halaman pertama Anda!</p>
+      </div>
+    )
+  }
+
+  return (
+    <table className="admin-table">
+      <thead>
+        <tr>
+          <th>PAGE TITLE</th>
+          <th>URL SLUG</th>
+          <th>LAST UPDATED</th>
+          <th>STATUS</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {pages.map((page) => (
+          <tr key={page._id}>
+            <td>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FileText size={16} style={{ color: '#6366f1' }} />
+                <span style={{ fontWeight: '500' }}>{page.title}</span>
+              </div>
+            </td>
+            <td>
+              <code style={{ 
+                fontSize: '12px', 
+                padding: '4px 8px', 
+                background: 'rgba(99, 102, 241, 0.1)',
+                borderRadius: '4px',
+                color: '#6366f1'
+              }}>
+                /{page.slug?.current || 'homepage'}
+              </code>
+            </td>
+            <td style={{ color: '#9ca3af', fontSize: '14px' }}>
+              {formatDate(page._updatedAt)}
+            </td>
+            <td>
+              <span className="admin-status-badge active">Published</span>
+            </td>
+            <td>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => router.push(`/admin/pages/edit/${page._id}`)}
+                  className="admin-header-btn"
+                  style={{ padding: '6px 12px' }}
+                  title="Edit"
+                >
+                  <Edit size={16} />
+                </button>
+                <button
+                  onClick={() => window.open(`/${page.slug?.current || ''}`, '_blank')}
+                  className="admin-header-btn"
+                  style={{ padding: '6px 12px' }}
+                  title="View"
+                >
+                  <Eye size={16} />
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
 
 export default function AdminPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const router = useRouter()
 
+  const [stats, setStats] = useState([
+    { name: "Total Pages", value: "0", icon: FileText, color: "blue", change: "Loading..." },
+    { name: "Published Pages", value: "0", icon: CheckCircle, color: "green", change: "Loading..." },
+    { name: "Draft Pages", value: "0", icon: Flag, color: "orange", change: "Loading..." },
+    { name: "Last Updated", value: "-", icon: Calendar, color: "purple", change: "Loading..." },
+  ])
+
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: Home, current: true },
     { name: "Content Pages", href: "/admin/pages", icon: FileText, current: false },
-    { name: "Events & Shows", href: "#", icon: Calendar, current: false },
-    { name: "Tickets & Booking", href: "#", icon: ShoppingCart, current: false },
-    { name: "Visitors", href: "#", icon: Users, current: false },
-    { name: "Analytics", href: "#", icon: BarChart3, current: false },
-    { name: "Settings", href: "#", icon: Lock, current: false },
   ]
 
-  const stats = [
-    { name: "Today's Visitors", value: "1,234", icon: Users, color: "blue", change: "+12% from yesterday" },
-    { name: "Revenue Today", value: "Rp 15.2M", icon: DollarSign, color: "orange", change: "+8% from yesterday" },
-    { name: "Active Events", value: "8", icon: Calendar, color: "purple", change: "+2 this week" },
-    { name: "Tickets Sold", value: "1,456", icon: TrendingUp, color: "green", change: "+15% this month" },
-    { name: "Cultural Shows", value: "24", icon: CheckCircle, color: "blue" },
-    { name: "Total Pages", value: "12", icon: FileText, color: "orange" },
-  ]
+  useEffect(() => {
+    // Fetch stats dari API
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/pages')
+        if (response.ok) {
+          const pages = await response.json()
+          const totalPages = pages.length
+          const publishedPages = pages.length // Semua page dianggap published
+          const draftPages = 0 // Placeholder untuk draft
+          
+          // Cari page terakhir yang diupdate
+          const lastUpdated = pages.length > 0 
+            ? new Date(Math.max(...pages.map((p: any) => new Date(p._updatedAt).getTime())))
+            : new Date()
+          
+          const formatDate = (date: Date) => {
+            return date.toLocaleDateString('id-ID', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            })
+          }
+
+          setStats([
+            { name: "Total Pages", value: totalPages.toString(), icon: FileText, color: "blue", change: `${totalPages} halaman terdaftar` },
+            { name: "Published Pages", value: publishedPages.toString(), icon: CheckCircle, color: "green", change: "Semua halaman aktif" },
+            { name: "Draft Pages", value: draftPages.toString(), icon: Flag, color: "orange", change: "Tidak ada draft" },
+            { name: "Last Updated", value: formatDate(lastUpdated), icon: Calendar, color: "purple", change: "Update terakhir" },
+          ])
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error)
+      }
+    }
+
+    fetchStats()
+  }, [])
 
   return (
     <div className="admin-dashboard">
@@ -85,13 +237,16 @@ export default function AdminPage() {
         </nav>
 
         <div className="admin-upgrade-card">
-          <div className="admin-upgrade-icon">★</div>
-          <h3 className="admin-upgrade-title">Upgrade to PRO</h3>
+          <div className="admin-upgrade-icon">📄</div>
+          <h3 className="admin-upgrade-title">Content Management</h3>
           <p className="admin-upgrade-desc">
-            Improve your development process and start doing more with GWK UI PRO!
+            Kelola semua konten website GWK Cultural Park dengan mudah dan efisien.
           </p>
-          <button className="admin-upgrade-btn">
-            Upgrade to PRO
+          <button 
+            onClick={() => router.push('/admin/pages')}
+            className="admin-upgrade-btn"
+          >
+            Manage Pages
           </button>
         </div>
       </div>
@@ -154,126 +309,147 @@ export default function AdminPage() {
             ))}
           </div>
 
-          {/* Charts Row */}
+          {/* Quick Actions */}
           <div className="admin-charts">
-            {/* Monthly Revenue Chart */}
             <div className="admin-chart-card">
               <div className="admin-chart-header">
                 <div>
-                  <h3 className="admin-chart-title">Monthly Revenue</h3>
-                  <div className="admin-chart-value">Rp 2.4M</div>
-                  <span className="admin-stat-change">+8.3%</span>
-                  <p className="admin-chart-subtitle">Total Revenue</p>
+                  <h3 className="admin-chart-title">Quick Actions</h3>
+                  <p className="admin-chart-subtitle">Aksi cepat untuk manajemen konten</p>
                 </div>
-                <BarChart3 className="admin-nav-icon" />
+                <FileText className="admin-nav-icon" />
               </div>
 
-              <div className="admin-chart-placeholder">
-                <BarChart3 className="admin-chart-icon" />
-                <p>Line Chart Placeholder</p>
+              <div style={{ display: 'grid', gap: '12px', marginTop: '20px' }}>
+                <button 
+                  onClick={() => router.push('/admin/pages/create')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '16px',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'transform 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                  onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                  <FileText size={20} />
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontWeight: '600' }}>Buat Halaman Baru</div>
+                    <div style={{ fontSize: '12px', opacity: '0.9' }}>Tambah konten website baru</div>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => router.push('/admin/pages')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '16px',
+                    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'transform 0.2s',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                  onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                  <FileText size={20} />
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontWeight: '600' }}>Kelola Halaman</div>
+                    <div style={{ fontSize: '12px', opacity: '0.9' }}>Edit atau hapus halaman existing</div>
+                  </div>
+                </button>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', marginTop: '16px' }}>
-                <CheckCircle className="admin-nav-icon" style={{ color: '#10b981', marginRight: '8px' }} />
-                <span style={{ color: '#10b981', fontSize: '14px' }}>On track</span>
+              <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', gap: '8px' }}>
+                <CheckCircle className="admin-nav-icon" style={{ color: '#10b981' }} />
+                <span style={{ color: '#10b981', fontSize: '14px', fontWeight: '500' }}>System Operational</span>
               </div>
             </div>
 
-            {/* Cultural Events Chart */}
+            {/* Content Statistics */}
             <div className="admin-chart-card">
               <div className="admin-chart-header">
-                <h3 className="admin-chart-title">Cultural Events</h3>
-                <Calendar className="admin-nav-icon" />
+                <h3 className="admin-chart-title">Content Overview</h3>
+                <PieChart className="admin-nav-icon" />
               </div>
 
-              <div className="admin-chart-placeholder">
-                <BarChart3 className="admin-chart-icon" />
-                <p>Bar Chart Placeholder</p>
+              <div style={{ marginTop: '20px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-around',
+                  padding: '20px',
+                  background: 'rgba(99, 102, 241, 0.1)',
+                  borderRadius: '12px',
+                  marginBottom: '16px'
+                }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '32px', fontWeight: '700', color: '#6366f1' }}>
+                      {stats[0].value}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>Total Pages</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '32px', fontWeight: '700', color: '#10b981' }}>
+                      {stats[1].value}
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>Published</div>
+                  </div>
+                </div>
+
+                <div style={{ 
+                  padding: '16px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(16, 185, 129, 0.2)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <CheckCircle size={16} style={{ color: '#10b981' }} />
+                    <span style={{ fontSize: '14px', fontWeight: '600', color: '#10b981' }}>All Content Published</span>
+                  </div>
+                  <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0 }}>
+                    Semua halaman dalam status published dan dapat diakses publik
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Tables Row */}
+          {/* Recent Pages Table */}
           <div className="admin-tables">
-            {/* Recent Events Table */}
-            <div className="admin-table-card">
+            <div className="admin-table-card" style={{ gridColumn: '1 / -1' }}>
               <div className="admin-table-header">
-                <h3 className="admin-table-title">Recent Events</h3>
-                <button className="admin-header-btn">
-                  <MoreVertical className="admin-nav-icon" />
+                <h3 className="admin-table-title">Recent Pages</h3>
+                <button 
+                  onClick={() => router.push('/admin/pages')}
+                  className="admin-header-btn"
+                  style={{ 
+                    padding: '8px 16px', 
+                    background: '#6366f1',
+                    color: 'white',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                >
+                  View All
                 </button>
               </div>
 
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>EVENT NAME</th>
-                    <th>STATUS</th>
-                    <th>ATTENDEES</th>
-                    <th>DATE</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Kecak Dance Performance</td>
-                    <td>
-                      <span className="admin-status-badge active">Active</span>
-                    </td>
-                    <td>150</td>
-                    <td>15/01/24</td>
-                  </tr>
-                  <tr>
-                    <td>Cultural Workshop</td>
-                    <td>
-                      <span className="admin-status-badge pending">Pending</span>
-                    </td>
-                    <td>45</td>
-                    <td>16/01/24</td>
-                  </tr>
-                  <tr>
-                    <td>Garuda Wisnu Kencana Tour</td>
-                    <td>
-                      <span className="admin-status-badge cancelled">Cancelled</span>
-                    </td>
-                    <td>89</td>
-                    <td>17/01/24</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* Daily Visitors & Revenue Breakdown */}
-            <div className="admin-table-card">
-              <div className="admin-daily-stats">
-                <div className="admin-daily-card">
-                  <h3 className="admin-table-title" style={{ marginBottom: '16px' }}>Daily Visitors</h3>
-                  <div className="admin-daily-value">1,234</div>
-                  <p className="admin-daily-label">Visitors Today</p>
-                  <span className="admin-daily-change">+12%</span>
-                </div>
-
-                <div className="admin-daily-card">
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <h3 className="admin-table-title" style={{ margin: 0 }}>Revenue Breakdown</h3>
-                    <select style={{
-                      fontSize: '14px',
-                      borderRadius: '8px',
-                      padding: '4px 12px',
-                      background: '#374151',
-                      color: 'white',
-                      border: '1px solid #4b5563',
-                      outline: 'none'
-                    }}>
-                      <option>Monthly</option>
-                    </select>
-                  </div>
-
-                  <div className="admin-chart-placeholder" style={{ height: '128px' }}>
-                    <PieChart className="admin-nav-icon" />
-                    <p style={{ fontSize: '12px' }}>Pie Chart</p>
-                  </div>
-                </div>
-              </div>
+              <RecentPagesTable />
             </div>
           </div>
         </main>
