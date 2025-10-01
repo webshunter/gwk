@@ -1576,8 +1576,15 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                                   { value: 'black', color: '#000000', label: 'Hitam' },
                                   { value: 'white', color: '#FFFFFF', label: 'Putih' },
                                   { value: 'gray', color: '#6B7280', label: 'Abu-abu' },
-                                  { value: 'purple', color: '#805AD5', label: 'Ungu' },
-                                  { value: 'blue', color: '#3B82F6', label: 'Biru' }
+                                  { value: 'red', color: '#EF4444', label: 'Merah' },
+                                  { value: 'orange', color: '#F97316', label: 'Orange' },
+                                  { value: 'yellow', color: '#EAB308', label: 'Kuning' },
+                                  { value: 'green', color: '#22C55E', label: 'Hijau' },
+                                  { value: 'teal', color: '#14B8A6', label: 'Teal' },
+                                  { value: 'blue', color: '#3B82F6', label: 'Biru' },
+                                  { value: 'indigo', color: '#6366F1', label: 'Indigo' },
+                                  { value: 'purple', color: '#A855F7', label: 'Ungu' },
+                                  { value: 'pink', color: '#EC4899', label: 'Pink' }
                                 ].map((colorOption) => (
                                   <button
                                     key={colorOption.value}

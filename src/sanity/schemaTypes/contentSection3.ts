@@ -34,8 +34,15 @@ export const contentSection3 = defineType({
                   { title: 'Hitam', value: 'black' },
                   { title: 'Putih', value: 'white' },
                   { title: 'Abu-abu', value: 'gray' },
+                  { title: 'Merah', value: 'red' },
+                  { title: 'Orange', value: 'orange' },
+                  { title: 'Kuning', value: 'yellow' },
+                  { title: 'Hijau', value: 'green' },
+                  { title: 'Teal', value: 'teal' },
+                  { title: 'Biru', value: 'blue' },
+                  { title: 'Indigo', value: 'indigo' },
                   { title: 'Ungu', value: 'purple' },
-                  { title: 'Biru', value: 'blue' }
+                  { title: 'Pink', value: 'pink' }
                 ]
               },
               initialValue: 'black'

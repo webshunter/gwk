@@ -99,7 +99,7 @@ export type ContentSection3 = {
     _key: string
     name: string
     link: string
-    textColor: "black" | "white" | "gray" | "purple" | "blue"
+    textColor: "black" | "white" | "gray" | "red" | "orange" | "yellow" | "green" | "teal" | "blue" | "indigo" | "purple" | "pink"
   }>
   video?: {
     _type: "file"
