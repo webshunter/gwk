@@ -10,7 +10,9 @@ import {
   Link,
   Plus,
   X,
-  Upload
+  Upload,
+  Copy,
+  Check
 } from "lucide-react"
 import { urlFor } from "@/sanity/lib/image"
 import "./section-components.css"
@@ -194,6 +196,17 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
   const [isEditing, setIsEditing] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [fileInfo, setFileInfo] = useState<{name: string, size: number} | null>(null)
+  const [copied, setCopied] = useState(false)
+
+  // Copy section ID to clipboard
+  const handleCopyId = () => {
+    const sectionId = section._key || section._id || ''
+    if (sectionId) {
+      navigator.clipboard.writeText(sectionId)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
   
   // Handlers for Content Section 2
   const addContentItem2 = () => {
@@ -383,6 +396,23 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
             <span className="admin-section-editor-subtitle">
               - {section.title}
             </span>
+          )}
+          {(section._key || section._id) && (
+            <button
+              type="button"
+              onClick={handleCopyId}
+              className="admin-section-editor-id-copy"
+              title={copied ? "Copied!" : "Copy Section ID"}
+            >
+              <span className="admin-section-editor-id">
+                ID: {section._key || section._id}
+              </span>
+              {copied ? (
+                <Check className="admin-section-editor-icon-small" />
+              ) : (
+                <Copy className="admin-section-editor-icon-small" />
+              )}
+            </button>
           )}
         </div>
         <div className="admin-section-editor-actions">

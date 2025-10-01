@@ -54,6 +54,42 @@
   font-size: 14px;
 }
 
+.admin-section-editor-id-copy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 12px;
+}
+
+.admin-section-editor-id-copy:hover {
+  background: #4b5563;
+  border-color: #805ad5;
+}
+
+.admin-section-editor-id {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: #9ca3af;
+  letter-spacing: 0.5px;
+}
+
+.admin-section-editor-icon-small {
+  width: 14px;
+  height: 14px;
+  color: #9ca3af;
+  transition: color 0.2s ease;
+}
+
+.admin-section-editor-id-copy:hover .admin-section-editor-icon-small {
+  color: #805ad5;
+}
+
 .admin-section-editor-actions {
   display: flex;
   align-items: center;
