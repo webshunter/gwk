@@ -24,31 +24,38 @@ export const contentSection3 = defineType({
               title: 'Link URL',
               type: 'string',
               validation: (Rule) => Rule.required()
+            },
+            {
+              name: 'textColor',
+              title: 'Warna Text Link',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Hitam', value: 'black' },
+                  { title: 'Putih', value: 'white' },
+                  { title: 'Abu-abu', value: 'gray' },
+                  { title: 'Ungu', value: 'purple' },
+                  { title: 'Biru', value: 'blue' }
+                ]
+              },
+              initialValue: 'black'
             }
           ],
           preview: {
             select: {
               title: 'name',
-              subtitle: 'link'
+              subtitle: 'link',
+              color: 'textColor'
+            },
+            prepare({ title, subtitle, color }) {
+              return {
+                title: title || 'Untitled Link',
+                subtitle: `${subtitle} • ${color}`
+              }
             }
           }
         }
       ]
-    }),
-    defineField({
-      name: 'textColor',
-      title: 'Warna Text Link',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Hitam', value: 'black' },
-          { title: 'Putih', value: 'white' },
-          { title: 'Abu-abu', value: 'gray' },
-          { title: 'Ungu', value: 'purple' },
-          { title: 'Biru', value: 'blue' }
-        ]
-      },
-      initialValue: 'black'
     }),
     defineField({
       name: 'video',

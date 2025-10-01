@@ -194,18 +194,6 @@ const sectionTemplates = {
     icon: '📋',
     fields: [
       { key: 'ctaLinks', label: 'CTA Links', type: 'ctaLinks' },
-      { 
-        key: 'textColor', 
-        label: 'Warna Text Link', 
-        type: 'select', 
-        options: [
-          { value: 'black', label: 'Hitam' },
-          { value: 'white', label: 'Putih' },
-          { value: 'gray', label: 'Abu-abu' },
-          { value: 'purple', label: 'Ungu' },
-          { value: 'blue', label: 'Biru' }
-        ]
-      },
       { key: 'video', label: 'Video', type: 'video' },
       { key: 'title', label: 'Title', type: 'text', placeholder: 'Masukkan title section' },
       { key: 'description', label: 'Deskripsi', type: 'textarea', rows: 4, placeholder: 'Deskripsi section' },
@@ -417,7 +405,8 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
       { 
         _key: Math.random().toString(36).substring(2, 11),
         name: '',
-        link: ''
+        link: '',
+        textColor: 'black'
       }
     ])
   }
@@ -1575,6 +1564,24 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                                 className="admin-section-editor-input"
                                 placeholder="/buy-ticket atau https://example.com"
                               />
+                            </div>
+
+                            {/* Warna Text Link */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">
+                                Warna Text Link
+                              </label>
+                              <select
+                                value={link.textColor || 'black'}
+                                onChange={(e) => updateCtaLink(linkIndex, 'textColor', e.target.value)}
+                                className="admin-section-editor-select"
+                              >
+                                <option value="black">Hitam</option>
+                                <option value="white">Putih</option>
+                                <option value="gray">Abu-abu</option>
+                                <option value="purple">Ungu</option>
+                                <option value="blue">Biru</option>
+                              </select>
                             </div>
                           </div>
                         </div>

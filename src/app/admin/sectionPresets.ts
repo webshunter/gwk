@@ -99,8 +99,8 @@ export type ContentSection3 = {
     _key: string
     name: string
     link: string
+    textColor: "black" | "white" | "gray" | "purple" | "blue"
   }>
-  textColor: "black" | "white" | "gray" | "purple" | "blue"
   video?: {
     _type: "file"
     asset?: {
@@ -264,7 +264,6 @@ export const sectionFactories: Record<SectionType, () => SectionPayload> = {
     _type: "contentSection3",
     _key: nanoid(),
     ctaLinks: [],
-    textColor: "black",
     video: null,
     title: "",
     description: "",
@@ -405,7 +404,6 @@ export const sectionPalette: Array<{
     icon: null,
     defaultData: {
       ctaLinks: [],
-      textColor: "black",
       title: "",
       description: "",
       gallery: []
