@@ -1571,17 +1571,31 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                               <label className="admin-section-editor-field-label">
                                 Warna Text Link
                               </label>
-                              <select
-                                value={link.textColor || 'black'}
-                                onChange={(e) => updateCtaLink(linkIndex, 'textColor', e.target.value)}
-                                className="admin-section-editor-select"
-                              >
-                                <option value="black">Hitam</option>
-                                <option value="white">Putih</option>
-                                <option value="gray">Abu-abu</option>
-                                <option value="purple">Ungu</option>
-                                <option value="blue">Biru</option>
-                              </select>
+                              <div className="admin-section-editor-color-picker">
+                                {[
+                                  { value: 'black', color: '#000000', label: 'Hitam' },
+                                  { value: 'white', color: '#FFFFFF', label: 'Putih' },
+                                  { value: 'gray', color: '#6B7280', label: 'Abu-abu' },
+                                  { value: 'purple', color: '#805AD5', label: 'Ungu' },
+                                  { value: 'blue', color: '#3B82F6', label: 'Biru' }
+                                ].map((colorOption) => (
+                                  <button
+                                    key={colorOption.value}
+                                    type="button"
+                                    onClick={() => updateCtaLink(linkIndex, 'textColor', colorOption.value)}
+                                    className={`admin-section-editor-color-option ${
+                                      (link.textColor || 'black') === colorOption.value ? 'active' : ''
+                                    }`}
+                                    title={colorOption.label}
+                                  >
+                                    <span 
+                                      className="admin-section-editor-color-box"
+                                      style={{ backgroundColor: colorOption.color }}
+                                    ></span>
+                                    <span className="admin-section-editor-color-label">{colorOption.label}</span>
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
