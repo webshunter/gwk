@@ -28,9 +28,9 @@ const pageTemplates = [
   {
     id: 'template-3',
     name: 'Template 3',
-    description: 'Feature Showcase',
+    description: 'Hero Section 3 + Content Section 2',
     icon: '⭐',
-    sections: ['heroSection', 'featureSection', 'testimonialSection']
+    sections: ['heroSection3', 'contentSection2']
   },
   {
     id: 'template-4',
