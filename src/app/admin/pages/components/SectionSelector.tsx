@@ -51,7 +51,7 @@ const availableSections = [
   },
   {
     type: 'heroSection3',
-    title: 'Hero Section 3',
+    title: 'Hero Section',
     description: 'Alternative hero layout dengan background image dan CTA',
     icon: '🎯',
     color: 'blue'

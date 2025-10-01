@@ -45,7 +45,7 @@ export const template = defineType({
         }),
         defineArrayMember({
           name: 'heroSection3',
-          title: 'Hero Section 3',
+          title: 'Hero Section',
           type: 'heroSection3',
         }),
         defineArrayMember({

@@ -107,7 +107,7 @@ const sectionTemplates = {
     ]
   },
   heroSection3: {
-    title: 'Hero Section 3',
+    title: 'Hero Section',
     icon: '🎯',
     fields: [
       { key: 'preTitle', label: 'Pre Title', type: 'text', placeholder: 'Discover' },

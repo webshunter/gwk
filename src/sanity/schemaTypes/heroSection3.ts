@@ -2,7 +2,7 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 
 export const heroSection3 = defineType({
   name: 'heroSection3',
-  title: 'Hero Section 3',
+  title: 'Hero Section',
   type: 'object',
   fields: [
     defineField({
@@ -72,7 +72,7 @@ export const heroSection3 = defineType({
     },
     prepare({title, subtitle, media}) {
       return {
-        title: title || 'Hero Section 3',
+        title: title || 'Hero Section',
         subtitle: subtitle || 'No subtitle',
         media: media,
       }

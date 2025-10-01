@@ -283,7 +283,7 @@ export const sectionPalette: Array<{
   },
   {
     type: "heroSection3",
-    title: "Hero Section 3",
+    title: "Hero Section",
     description: "Alternative hero section layout with background image, title, and CTA",
     icon: null,
     defaultData: {

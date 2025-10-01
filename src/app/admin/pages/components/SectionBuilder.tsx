@@ -77,7 +77,7 @@ const sectionIcons: Record<string, string> = {
 // Mapping nama untuk tiap section type
 const sectionNames: Record<string, string> = {
   heroSection: 'Hero Section',
-  heroSection3: 'Hero Section 3',
+  heroSection3: 'Hero Section',
   featureSection: 'Feature Section',
   testimonialSection: 'Testimonial Section',
   mapSection: 'Map Section',
