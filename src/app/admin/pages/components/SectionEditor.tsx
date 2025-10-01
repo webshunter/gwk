@@ -662,6 +662,314 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                   </div>
                 )}
 
+                {/* Features */}
+                {field.type === 'features' && (
+                  <div className="admin-section-editor-features">
+                    <div className="admin-section-editor-features-header">
+                      <h4>Daftar Fitur ({(section.features || []).length})</h4>
+                      <button
+                        type="button"
+                        onClick={addFeature}
+                        className="admin-section-editor-add-feature"
+                      >
+                        <Plus className="admin-section-editor-icon" />
+                        Tambah Fitur
+                      </button>
+                    </div>
+                    {(section.features || []).map((feature: any, featureIndex: number) => (
+                      <div key={featureIndex} className="admin-section-editor-feature">
+                        <div className="admin-section-editor-feature-header">
+                          <h5>⭐ Fitur {featureIndex + 1}</h5>
+                          <button
+                            type="button"
+                            onClick={() => removeFeature(featureIndex)}
+                            className="admin-section-editor-remove-feature"
+                          >
+                            <X className="admin-section-editor-icon" />
+                          </button>
+                        </div>
+                        <div className="admin-section-editor-feature-fields">
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Judul Fitur</label>
+                            <input
+                              type="text"
+                              value={feature.title || ''}
+                              onChange={(e) => updateFeature(featureIndex, 'title', e.target.value)}
+                              className="admin-section-editor-input"
+                              placeholder="Judul fitur"
+                            />
+                          </div>
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Deskripsi Fitur</label>
+                            <textarea
+                              value={feature.description || ''}
+                              onChange={(e) => updateFeature(featureIndex, 'description', e.target.value)}
+                              className="admin-section-editor-textarea"
+                              rows={2}
+                              placeholder="Deskripsi fitur"
+                            />
+                          </div>
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Icon (emoji atau class)</label>
+                            <input
+                              type="text"
+                              value={feature.icon || ''}
+                              onChange={(e) => updateFeature(featureIndex, 'icon', e.target.value)}
+                              className="admin-section-editor-input"
+                              placeholder="⭐ atau icon-name"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {(section.features || []).length === 0 && (
+                      <div className="admin-section-editor-empty">
+                        <p>Belum ada fitur. Klik "Tambah Fitur" untuk menambahkan.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Testimonials */}
+                {field.type === 'testimonials' && (
+                  <div className="admin-section-editor-testimonials">
+                    <div className="admin-section-editor-testimonials-header">
+                      <h4>Daftar Testimoni ({(section.testimonials || []).length})</h4>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const currentTestimonials = section.testimonials || []
+                          onUpdate(index, 'testimonials', [
+                            ...currentTestimonials,
+                            {
+                              _key: Math.random().toString(36).substring(2, 11),
+                              quote: '',
+                              author: '',
+                              role: '',
+                              avatar: null
+                            }
+                          ])
+                        }}
+                        className="admin-section-editor-add-testimonial"
+                      >
+                        <Plus className="admin-section-editor-icon" />
+                        Tambah Testimoni
+                      </button>
+                    </div>
+                    {(section.testimonials || []).map((testimonial: any, testimonialIndex: number) => (
+                      <div key={testimonial._key || testimonialIndex} className="admin-section-editor-testimonial">
+                        <div className="admin-section-editor-testimonial-header">
+                          <h5>💬 Testimoni {testimonialIndex + 1}</h5>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const currentTestimonials = section.testimonials || []
+                              const updatedTestimonials = currentTestimonials.filter((_: any, i: number) => i !== testimonialIndex)
+                              onUpdate(index, 'testimonials', updatedTestimonials)
+                            }}
+                            className="admin-section-editor-remove-testimonial"
+                          >
+                            <X className="admin-section-editor-icon" />
+                          </button>
+                        </div>
+                        <div className="admin-section-editor-testimonial-fields">
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Quote / Testimoni</label>
+                            <textarea
+                              value={testimonial.quote || ''}
+                              onChange={(e) => {
+                                const currentTestimonials = section.testimonials || []
+                                const updatedTestimonials = currentTestimonials.map((t: any, i: number) =>
+                                  i === testimonialIndex ? { ...t, quote: e.target.value } : t
+                                )
+                                onUpdate(index, 'testimonials', updatedTestimonials)
+                              }}
+                              className="admin-section-editor-textarea"
+                              rows={3}
+                              placeholder="Testimoni pelanggan..."
+                            />
+                          </div>
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Nama Author</label>
+                            <input
+                              type="text"
+                              value={testimonial.author || ''}
+                              onChange={(e) => {
+                                const currentTestimonials = section.testimonials || []
+                                const updatedTestimonials = currentTestimonials.map((t: any, i: number) =>
+                                  i === testimonialIndex ? { ...t, author: e.target.value } : t
+                                )
+                                onUpdate(index, 'testimonials', updatedTestimonials)
+                              }}
+                              className="admin-section-editor-input"
+                              placeholder="John Doe"
+                            />
+                          </div>
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Role / Jabatan</label>
+                            <input
+                              type="text"
+                              value={testimonial.role || ''}
+                              onChange={(e) => {
+                                const currentTestimonials = section.testimonials || []
+                                const updatedTestimonials = currentTestimonials.map((t: any, i: number) =>
+                                  i === testimonialIndex ? { ...t, role: e.target.value } : t
+                                )
+                                onUpdate(index, 'testimonials', updatedTestimonials)
+                              }}
+                              className="admin-section-editor-input"
+                              placeholder="CEO, Company Name"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {(section.testimonials || []).length === 0 && (
+                      <div className="admin-section-editor-empty">
+                        <p>Belum ada testimoni. Klik "Tambah Testimoni" untuk menambahkan.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Content Items - Content Section 1 */}
+                {field.type === 'contentItems' && (
+                  <div className="admin-section-editor-field">
+                    <label className="admin-section-editor-field-label">{field.label}</label>
+                    <button
+                      type="button"
+                      onClick={addContentItem}
+                      className="admin-section-editor-toggle"
+                      style={{ marginBottom: '12px' }}
+                    >
+                      <Plus size={14} />
+                    </button>
+                    <div className="admin-section-editor-gallery">
+                      {(section.items || []).map((item: any, itemIndex: number) => (
+                        <div key={item._key || itemIndex} className="admin-section-editor-gallery-item">
+                          <div className="admin-section-editor-marker-header">
+                            <h4 style={{ margin: 0, color: '#e2e8f0', fontSize: '14px' }}>
+                              📄 Content Item #{itemIndex + 1}
+                            </h4>
+                            <button
+                              type="button"
+                              onClick={() => removeContentItem(itemIndex)}
+                              className="admin-section-editor-remove"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+
+                          <div style={{ display: 'grid', gap: '16px' }}>
+                            {/* Image Upload */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">Gambar <span style={{color: '#ef4444'}}>*</span></label>
+                              {(() => {
+                                const imageUrl = getImageUrl(item.image)
+                                if (imageUrl) {
+                                  return (
+                                    <div className="admin-section-editor-image-preview">
+                                      <img 
+                                        src={imageUrl} 
+                                        alt="Preview" 
+                                        className="admin-section-editor-preview-image"
+                                        onError={(e) => {
+                                          console.error('Image failed to load:', imageUrl)
+                                          e.currentTarget.style.display = 'none'
+                                        }}
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => updateContentItem(itemIndex, 'image', null)}
+                                        className="admin-section-editor-image-remove"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                    </div>
+                                  )
+                                }
+                                
+                                const inputId = `content-item-image-${index}-${itemIndex}`
+                                return (
+                                  <div className="admin-section-editor-upload">
+                                    <input
+                                      id={inputId}
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={async (e) => {
+                                        const file = e.target.files?.[0]
+                                        if (!file) return
+
+                                        if (!file.type.startsWith('image/')) {
+                                          alert('File harus berupa gambar!')
+                                          return
+                                        }
+                                        if (file.size > 5 * 1024 * 1024) {
+                                          alert('Ukuran file maksimal 5MB!')
+                                          return
+                                        }
+
+                                        const blobUrl = URL.createObjectURL(file)
+                                        updateContentItem(itemIndex, 'image', {
+                                          _type: 'image',
+                                          asset: { url: blobUrl },
+                                          file
+                                        })
+                                      }}
+                                      style={{ display: 'none' }}
+                                    />
+                                    <label htmlFor={inputId} className="admin-section-editor-upload-label">
+                                      <Upload size={32} />
+                                      <span className="admin-section-editor-upload-title">
+                                        Klik untuk memilih gambar
+                                      </span>
+                                      <span className="admin-section-editor-upload-subtitle">
+                                        atau drag & drop file di sini
+                                      </span>
+                                      <span className="admin-section-editor-upload-hint">
+                                        Format: JPG, PNG, GIF (Max 5MB)
+                                      </span>
+                                    </label>
+                                  </div>
+                                )
+                              })()}
+                            </div>
+
+                            {/* Title */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">Judul <span style={{color: '#ef4444'}}>*</span></label>
+                              <input
+                                type="text"
+                                value={item.title || ''}
+                                onChange={(e) => updateContentItem(itemIndex, 'title', e.target.value)}
+                                className="admin-section-editor-input"
+                                placeholder="Judul content item..."
+                              />
+                            </div>
+
+                            {/* Description (Optional) */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">Deskripsi (opsional)</label>
+                              <textarea
+                                value={item.description || ''}
+                                onChange={(e) => updateContentItem(itemIndex, 'description', e.target.value)}
+                                className="admin-section-editor-textarea"
+                                rows={3}
+                                placeholder="Deskripsi singkat content item..."
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {(section.items || []).length === 0 && (
+                        <div className="admin-section-editor-empty">
+                          <p>Belum ada content item. Klik tombol "+" untuk menambahkan.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Map Markers */}
                 {field.type === 'markers' && (
                   <div className="admin-section-editor-markers">
