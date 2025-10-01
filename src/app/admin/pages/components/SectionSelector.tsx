@@ -99,6 +99,13 @@ const availableSections = [
     color: 'yellow'
   },
   {
+    type: 'contentSection3',
+    title: 'Content Section 3',
+    description: 'CTA links dengan warna custom, video, title, deskripsi, dan gallery foto',
+    icon: '📋',
+    color: 'indigo'
+  },
+  {
     type: 'textSection',
     title: 'Text Section',
     description: 'Bagian teks sederhana dengan judul dan konten',

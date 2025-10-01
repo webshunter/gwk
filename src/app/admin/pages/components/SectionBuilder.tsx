@@ -72,6 +72,7 @@ const sectionIcons: Record<string, string> = {
   activitySection: '🎨',
   contentSection1: '📄',
   contentSection2: '📑',
+  contentSection3: '📋',
 }
 
 // Mapping nama untuk tiap section type
@@ -84,6 +85,7 @@ const sectionNames: Record<string, string> = {
   activitySection: 'Activity Section',
   contentSection1: 'Content Section 1',
   contentSection2: 'Content Section 2',
+  contentSection3: 'Content Section 3',
 }
 
 interface SortableSectionItemProps {
