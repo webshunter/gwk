@@ -662,6 +662,157 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                   </div>
                 )}
 
+                {/* Activity Gallery */}
+                {field.type === 'gallery' && (
+                  <div className="admin-section-editor-gallery">
+                    <div className="admin-section-editor-gallery-header">
+                      <h4>Activity Gallery ({(section.gallery || []).length})</h4>
+                      <button
+                        type="button"
+                        onClick={addGalleryItem}
+                        className="admin-section-editor-add-gallery"
+                      >
+                        <Plus className="admin-section-editor-icon" />
+                        Tambah Activity
+                      </button>
+                    </div>
+                    {(section.gallery || []).map((item: any, galleryIndex: number) => (
+                      <div key={item._key || galleryIndex} className="admin-section-editor-gallery-item">
+                        <div className="admin-section-editor-gallery-item-header">
+                          <h5>🎨 Activity {galleryIndex + 1}</h5>
+                          <button
+                            type="button"
+                            onClick={() => removeGalleryItem(galleryIndex)}
+                            className="admin-section-editor-remove-gallery"
+                          >
+                            <X className="admin-section-editor-icon" />
+                          </button>
+                        </div>
+                        <div className="admin-section-editor-gallery-item-fields">
+                          {/* Title */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Judul Activity</label>
+                            <input
+                              type="text"
+                              value={item.title || ''}
+                              onChange={(e) => updateGalleryItem(galleryIndex, 'title', e.target.value)}
+                              className="admin-section-editor-input"
+                              placeholder="Top of The Statue Tour"
+                            />
+                          </div>
+
+                          {/* Image Upload */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Gambar Activity</label>
+                            {(() => {
+                              const imageUrl = getImageUrl(item.image)
+                              return imageUrl ? (
+                                <div className="admin-section-editor-image-preview">
+                                  <img
+                                    src={imageUrl}
+                                    alt="Activity Preview"
+                                    className="admin-section-editor-image-preview-img"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => updateGalleryItem(galleryIndex, 'image', null)}
+                                    className="admin-section-editor-image-remove"
+                                  >
+                                    <X className="admin-section-editor-icon" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="admin-section-editor-upload">
+                                  <input
+                                    type="file"
+                                    id={`gallery-image-${index}-${galleryIndex}`}
+                                    accept="image/*"
+                                    onChange={async (e) => {
+                                      const file = e.target.files?.[0]
+                                      if (file) {
+                                        if (!file.type.startsWith('image/')) {
+                                          alert('Hanya file gambar yang diperbolehkan')
+                                          return
+                                        }
+                                        if (file.size > 5 * 1024 * 1024) {
+                                          alert('Ukuran file terlalu besar. Maksimal 5MB')
+                                          return
+                                        }
+                                        const url = URL.createObjectURL(file)
+                                        updateGalleryItem(galleryIndex, 'image', {
+                                          asset: { url },
+                                          file: file
+                                        })
+                                      }
+                                    }}
+                                    className="admin-section-editor-file-input"
+                                  />
+                                  <label htmlFor={`gallery-image-${index}-${galleryIndex}`} className="admin-section-editor-upload-label">
+                                    <Upload size={32} className="admin-section-editor-upload-icon" />
+                                    <span className="admin-section-editor-upload-title">Pilih Gambar</span>
+                                    <span className="admin-section-editor-upload-subtitle">atau drag & drop</span>
+                                    <span className="admin-section-editor-upload-hint">JPG, PNG (Max 5MB)</span>
+                                  </label>
+                                </div>
+                              )
+                            })()}
+                          </div>
+
+                          {/* Description (Optional) */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Deskripsi (opsional)</label>
+                            <textarea
+                              value={item.description || ''}
+                              onChange={(e) => updateGalleryItem(galleryIndex, 'description', e.target.value)}
+                              className="admin-section-editor-textarea"
+                              rows={2}
+                              placeholder="Deskripsi singkat activity..."
+                            />
+                          </div>
+
+                          {/* CTA (Optional) */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Call to Action (opsional)</label>
+                            <div className="admin-section-editor-cta">
+                              <div className="admin-section-editor-cta-field">
+                                <label className="admin-section-editor-cta-label">Label Button</label>
+                                <input
+                                  type="text"
+                                  value={item.cta?.label || ''}
+                                  onChange={(e) => updateGalleryItem(galleryIndex, 'cta', {
+                                    ...item.cta,
+                                    label: e.target.value
+                                  })}
+                                  className="admin-section-editor-input"
+                                  placeholder="Learn More"
+                                />
+                              </div>
+                              <div className="admin-section-editor-cta-field">
+                                <label className="admin-section-editor-cta-label">Link URL</label>
+                                <input
+                                  type="text"
+                                  value={item.cta?.href || ''}
+                                  onChange={(e) => updateGalleryItem(galleryIndex, 'cta', {
+                                    ...item.cta,
+                                    href: e.target.value
+                                  })}
+                                  className="admin-section-editor-input"
+                                  placeholder="/activity/statue-tour"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {(section.gallery || []).length === 0 && (
+                      <div className="admin-section-editor-empty">
+                        <p>Belum ada activity. Klik "Tambah Activity" untuk menambahkan item ke gallery.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Content Items - Content Section 2 */}
                 {field.type === 'contentItems2' && (
                   <div className="admin-section-editor-field">
