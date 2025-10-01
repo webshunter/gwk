@@ -9,16 +9,7 @@ interface SectionSelectorProps {
   onClose: () => void
 }
 
-// Template conf                  <div className="admin-section-selector-template-sections">
-                    {template.sections.map((sectionType, index) => {
-                      const section = availableSections.find(s => s.type === sectionType)
-                      return section ? (
-                        <span key={`${sectionType}-${index}`} className="admin-section-selector-template-badge">
-                          {section.icon} {section.title}
-                        </span>
-                      ) : null
-                    })}
-                  </div>
+// Template configurations
 const pageTemplates = [
   {
     id: 'template-1',
