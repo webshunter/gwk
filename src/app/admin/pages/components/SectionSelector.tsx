@@ -35,9 +35,9 @@ const pageTemplates = [
   {
     id: 'template-4',
     name: 'Template 4',
-    description: 'Content Page',
+    description: 'Hero Section + 4x Content Section 3',
     icon: '📝',
-    sections: ['heroSection', 'textSection', 'imageSection']
+    sections: ['heroSection', 'contentSection3', 'contentSection3', 'contentSection3', 'contentSection3']
   }
 ]
 
