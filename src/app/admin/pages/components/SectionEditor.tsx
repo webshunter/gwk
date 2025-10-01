@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { 
   Trash2, 
   ChevronDown, 
@@ -16,6 +16,22 @@ import {
 } from "lucide-react"
 import { urlFor } from "@/sanity/lib/image"
 import "./section-components.css"
+
+// Color palette untuk text color picker
+const COLOR_PALETTE = [
+  { value: 'black', color: '#000000', label: 'Hitam' },
+  { value: 'white', color: '#FFFFFF', label: 'Putih' },
+  { value: 'gray', color: '#6B7280', label: 'Abu-abu' },
+  { value: 'red', color: '#EF4444', label: 'Merah' },
+  { value: 'orange', color: '#F97316', label: 'Orange' },
+  { value: 'yellow', color: '#EAB308', label: 'Kuning' },
+  { value: 'green', color: '#22C55E', label: 'Hijau' },
+  { value: 'teal', color: '#14B8A6', label: 'Teal' },
+  { value: 'blue', color: '#3B82F6', label: 'Biru' },
+  { value: 'indigo', color: '#6366F1', label: 'Indigo' },
+  { value: 'purple', color: '#A855F7', label: 'Ungu' },
+  { value: 'pink', color: '#EC4899', label: 'Pink' }
+]
 
 // Helper function untuk mendapatkan URL gambar
 function getImageUrl(imageData: any): string | null {
@@ -208,6 +224,22 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
   const [uploading, setUploading] = useState(false)
   const [fileInfo, setFileInfo] = useState<{name: string, size: number} | null>(null)
   const [copied, setCopied] = useState(false)
+  const [colorPickerOpen, setColorPickerOpen] = useState<number | null>(null)
+  const colorPickerRef = useRef<HTMLDivElement>(null)
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setColorPickerOpen(null)
+      }
+    }
+
+    if (colorPickerOpen !== null) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [colorPickerOpen])
 
   // Copy section ID to clipboard
   const handleCopyId = () => {
@@ -1512,107 +1544,101 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                 {/* CTA Links - Content Section 3 */}
                 {field.type === 'ctaLinks' && (
                   <div className="admin-section-editor-field">
-                    <div className="admin-section-editor-gallery-header" style={{ marginTop: '16px' }}>
+                    <div className="admin-section-editor-cta-header">
                       <h4>{field.label} ({(section.ctaLinks || []).length})</h4>
                       <button
                         type="button"
                         onClick={addCtaLink}
-                        className="admin-section-editor-add-gallery"
+                        className="admin-section-editor-add-cta"
                       >
-                        <Plus className="admin-section-editor-icon" />
+                        <Plus size={16} />
                         Tambah Link
                       </button>
                     </div>
-                    <div className="admin-section-editor-gallery">
-                      {(section.ctaLinks || []).map((link: any, linkIndex: number) => (
-                        <div key={link._key || linkIndex} className="admin-section-editor-gallery-item">
-                          <div className="admin-section-editor-gallery-item-header">
-                            <h5>🔗 Link #{linkIndex + 1}</h5>
-                            <button
-                              type="button"
-                              onClick={() => removeCtaLink(linkIndex)}
-                              className="admin-section-editor-remove-gallery"
-                            >
-                              <X size={14} />
-                            </button>
-                          </div>
-
-                          <div className="admin-section-editor-gallery-item-fields">
-                            {/* Nama Link */}
-                            <div className="admin-section-editor-field">
-                              <label className="admin-section-editor-field-label">
-                                Nama Link <span className="admin-section-editor-required">*</span>
-                              </label>
+                    
+                    {(section.ctaLinks || []).length > 0 && (
+                      <div className="admin-section-editor-cta-table">
+                        <div className="admin-section-editor-cta-table-header">
+                          <div>Nama Link</div>
+                          <div>URL</div>
+                          <div>Warna Text</div>
+                          <div></div>
+                        </div>
+                        {(section.ctaLinks || []).map((link: any, linkIndex: number) => {
+                          const selectedColor = COLOR_PALETTE.find(c => c.value === (link.textColor || 'black'))
+                          return (
+                            <div key={link._key || linkIndex} className="admin-section-editor-cta-table-row">
                               <input
                                 type="text"
                                 value={link.name || ''}
                                 onChange={(e) => updateCtaLink(linkIndex, 'name', e.target.value)}
-                                className="admin-section-editor-input"
-                                placeholder="Contoh: Buy Ticket, Learn More"
+                                className="admin-section-editor-cta-input"
+                                placeholder="Buy Ticket"
                               />
-                            </div>
-
-                            {/* Link URL */}
-                            <div className="admin-section-editor-field">
-                              <label className="admin-section-editor-field-label">
-                                Link URL <span className="admin-section-editor-required">*</span>
-                              </label>
                               <input
                                 type="text"
                                 value={link.link || ''}
                                 onChange={(e) => updateCtaLink(linkIndex, 'link', e.target.value)}
-                                className="admin-section-editor-input"
-                                placeholder="/buy-ticket atau https://example.com"
+                                className="admin-section-editor-cta-input"
+                                placeholder="/buy-ticket"
                               />
-                            </div>
-
-                            {/* Warna Text Link */}
-                            <div className="admin-section-editor-field">
-                              <label className="admin-section-editor-field-label">
-                                Warna Text Link
-                              </label>
-                              <div className="admin-section-editor-color-picker">
-                                {[
-                                  { value: 'black', color: '#000000', label: 'Hitam' },
-                                  { value: 'white', color: '#FFFFFF', label: 'Putih' },
-                                  { value: 'gray', color: '#6B7280', label: 'Abu-abu' },
-                                  { value: 'red', color: '#EF4444', label: 'Merah' },
-                                  { value: 'orange', color: '#F97316', label: 'Orange' },
-                                  { value: 'yellow', color: '#EAB308', label: 'Kuning' },
-                                  { value: 'green', color: '#22C55E', label: 'Hijau' },
-                                  { value: 'teal', color: '#14B8A6', label: 'Teal' },
-                                  { value: 'blue', color: '#3B82F6', label: 'Biru' },
-                                  { value: 'indigo', color: '#6366F1', label: 'Indigo' },
-                                  { value: 'purple', color: '#A855F7', label: 'Ungu' },
-                                  { value: 'pink', color: '#EC4899', label: 'Pink' }
-                                ].map((colorOption) => (
-                                  <button
-                                    key={colorOption.value}
-                                    type="button"
-                                    onClick={() => updateCtaLink(linkIndex, 'textColor', colorOption.value)}
-                                    className={`admin-section-editor-color-option ${
-                                      (link.textColor || 'black') === colorOption.value ? 'active' : ''
-                                    }`}
-                                    title={colorOption.label}
-                                  >
-                                    <span 
-                                      className="admin-section-editor-color-box"
-                                      style={{ backgroundColor: colorOption.color }}
-                                    ></span>
-                                    <span className="admin-section-editor-color-label">{colorOption.label}</span>
-                                  </button>
-                                ))}
+                              <div className="admin-section-editor-cta-color-wrapper" ref={colorPickerOpen === linkIndex ? colorPickerRef : null}>
+                                <button
+                                  type="button"
+                                  onClick={() => setColorPickerOpen(colorPickerOpen === linkIndex ? null : linkIndex)}
+                                  className="admin-section-editor-cta-color-button"
+                                >
+                                  <span 
+                                    className="admin-section-editor-cta-color-preview"
+                                    style={{ backgroundColor: selectedColor?.color }}
+                                  ></span>
+                                  <span>{selectedColor?.label}</span>
+                                </button>
+                                {colorPickerOpen === linkIndex && (
+                                  <div className="admin-section-editor-color-popup">
+                                    <div className="admin-section-editor-color-popup-grid">
+                                      {COLOR_PALETTE.map((colorOption) => (
+                                        <button
+                                          key={colorOption.value}
+                                          type="button"
+                                          onClick={() => {
+                                            updateCtaLink(linkIndex, 'textColor', colorOption.value)
+                                            setColorPickerOpen(null)
+                                          }}
+                                          className={`admin-section-editor-color-popup-item ${
+                                            (link.textColor || 'black') === colorOption.value ? 'active' : ''
+                                          }`}
+                                          title={colorOption.label}
+                                        >
+                                          <span 
+                                            className="admin-section-editor-color-popup-box"
+                                            style={{ backgroundColor: colorOption.color }}
+                                          ></span>
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
+                              <button
+                                type="button"
+                                onClick={() => removeCtaLink(linkIndex)}
+                                className="admin-section-editor-cta-remove"
+                                title="Hapus link"
+                              >
+                                <X size={16} />
+                              </button>
                             </div>
-                          </div>
-                        </div>
-                      ))}
-                      {(section.ctaLinks || []).length === 0 && (
-                        <div className="admin-section-editor-empty">
-                          <p>Belum ada CTA link. Klik "Tambah Link" untuk menambahkan.</p>
-                        </div>
-                      )}
-                    </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                    
+                    {(section.ctaLinks || []).length === 0 && (
+                      <div className="admin-section-editor-empty">
+                        <p>Belum ada CTA link. Klik "Tambah Link" untuk menambahkan.</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
