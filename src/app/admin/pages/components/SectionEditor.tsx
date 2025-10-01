@@ -1272,7 +1272,7 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
 
                 {/* Activity Gallery */}
                 {field.type === 'gallery' && (
-                  <div className="admin-section-editor-gallery">
+                  <div className="admin-section-editor-field">
                     <div className="admin-section-editor-gallery-header">
                       <h4>Activity Gallery ({(section.gallery || []).length})</h4>
                       <button
@@ -1284,6 +1284,7 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                         Tambah Activity
                       </button>
                     </div>
+                    <div className="admin-section-editor-gallery-grid">
                     {(section.gallery || []).map((item: any, galleryIndex: number) => (
                       <div key={item._key || galleryIndex} className="admin-section-editor-gallery-item">
                         <div className="admin-section-editor-gallery-item-header">
@@ -1413,6 +1414,7 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                         </div>
                       </div>
                     ))}
+                    </div>
                     {(section.gallery || []).length === 0 && (
                       <div className="admin-section-editor-empty">
                         <p>Belum ada activity. Klik "Tambah Activity" untuk menambahkan item ke gallery.</p>
