@@ -65,21 +65,25 @@ interface SectionBuilderProps {
 // Mapping icon untuk tiap section type
 const sectionIcons: Record<string, string> = {
   heroSection: '🎯',
+  heroSection3: '🎯',
   featureSection: '⭐',
   testimonialSection: '💬',
   mapSection: '🗺️',
   activitySection: '🎨',
   contentSection1: '📄',
+  contentSection2: '📑',
 }
 
 // Mapping nama untuk tiap section type
 const sectionNames: Record<string, string> = {
   heroSection: 'Hero Section',
+  heroSection3: 'Hero Section 3',
   featureSection: 'Feature Section',
   testimonialSection: 'Testimonial Section',
   mapSection: 'Map Section',
   activitySection: 'Activity Section',
   contentSection1: 'Content Section 1',
+  contentSection2: 'Content Section 2',
 }
 
 interface SortableSectionItemProps {
@@ -215,7 +219,7 @@ export default function SectionBuilder({ sections, onUpdateSections }: SectionBu
   const updateSection = useCallback(async (index: number, field: string, value: any) => {
     console.log(`🔵 [SectionBuilder] updateSection called for index ${index}, field: ${field}`)
     // If it's an image or video field with a file, upload it first
-    if ((field === 'media' || field === 'image' || field === 'mapImage' || field === 'flyer' || field === 'video') && value?.file) {
+    if ((field === 'media' || field === 'image' || field === 'mapImage' || field === 'flyer' || field === 'video' || field === 'mainImage' || field === 'mainVideo') && value?.file) {
       try {
         value = await uploadFile(value.file)
       } catch (error) {

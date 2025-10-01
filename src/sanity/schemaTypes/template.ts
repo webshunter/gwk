@@ -44,6 +44,11 @@ export const template = defineType({
           type: 'heroSection',
         }),
         defineArrayMember({
+          name: 'heroSection3',
+          title: 'Hero Section 3',
+          type: 'heroSection3',
+        }),
+        defineArrayMember({
           name: 'featureSection',
           title: 'Feature Section',
           type: 'featureSection',
@@ -67,6 +72,11 @@ export const template = defineType({
           name: 'contentSection1',
           title: 'Content Section 1',
           type: 'contentSection1',
+        }),
+        defineArrayMember({
+          name: 'contentSection2',
+          title: 'Content Section 2',
+          type: 'contentSection2',
         }),
       ],
       validation: (rule) => rule.min(1).warning('Sebaiknya tambahkan minimal satu modul.'),

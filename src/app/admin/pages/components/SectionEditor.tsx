@@ -106,6 +106,21 @@ const sectionTemplates = {
       ]}
     ]
   },
+  heroSection3: {
+    title: 'Hero Section 3',
+    icon: '🎯',
+    fields: [
+      { key: 'preTitle', label: 'Pre Title', type: 'text', placeholder: 'Discover' },
+      { key: 'title', label: 'Judul Utama', type: 'text', required: true, placeholder: 'Cultural Heritage' },
+      { key: 'subtitle', label: 'Subtitle', type: 'textarea', placeholder: 'Experience the Beauty of Balinese Arts', rows: 2 },
+      { key: 'media', label: 'Gambar Background', type: 'image', required: true },
+      { key: 'cta', label: 'Call to Action', type: 'cta' },
+      { key: 'theme', label: 'Theme', type: 'select', options: [
+        { value: 'light', label: 'Light' },
+        { value: 'dark', label: 'Dark' }
+      ]}
+    ]
+  },
   featureSection: {
     title: 'Feature Section',
     icon: '⭐',
@@ -152,6 +167,25 @@ const sectionTemplates = {
       { key: 'video', label: 'Section Video', type: 'video' },
       { key: 'items', label: 'Content Items', type: 'contentItems' }
     ]
+  },
+  contentSection2: {
+    title: 'Content Section 2',
+    icon: '📑',
+    fields: [
+      { key: 'description', label: 'Section Description', type: 'textarea', rows: 4, required: true, placeholder: 'Deskripsi untuk bagian atas section.' },
+      { 
+        key: 'mediaType', 
+        label: 'Media Type', 
+        type: 'select', 
+        options: [
+          { value: 'image', label: 'Image' },
+          { value: 'video', label: 'Video' }
+        ] 
+      },
+      { key: 'mainImage', label: 'Main Image', type: 'image', condition: (s: Section) => s.mediaType === 'image' },
+      { key: 'mainVideo', label: 'Main Video', type: 'video', condition: (s: Section) => s.mediaType === 'video' },
+      { key: 'items', label: 'Content Items', type: 'contentItems2' }
+    ]
   }
 }
 
@@ -161,6 +195,38 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
   const [uploading, setUploading] = useState(false)
   const [fileInfo, setFileInfo] = useState<{name: string, size: number} | null>(null)
   
+  // Handlers for Content Section 2
+  const addContentItem2 = () => {
+    const currentItems = section.items || []
+    onUpdate(index, 'items', [
+      ...currentItems,
+      { 
+        _key: Math.random().toString(36).substring(2, 11),
+        title: '',
+        image: null,
+        cta: { label: '', link: '' }
+      }
+    ])
+  }
+
+  const updateContentItem2 = (itemIndex: number, field: string, value: any, ctaField?: 'label' | 'link') => {
+    const currentItems = section.items || []
+    const updatedItems = currentItems.map((item, i) => {
+      if (i !== itemIndex) return item
+      if (field === 'cta' && ctaField) {
+        return { ...item, cta: { ...item.cta, [ctaField]: value } }
+      }
+      return { ...item, [field]: value }
+    })
+    onUpdate(index, 'items', updatedItems)
+  }
+
+  const removeContentItem2 = (itemIndex: number) => {
+    const currentItems = section.items || []
+    const updatedItems = currentItems.filter((_, i) => i !== itemIndex)
+    onUpdate(index, 'items', updatedItems)
+  }
+
   // Content Items handlers untuk Content Section 1
   const addContentItem = () => {
     const currentItems = section.items || []
@@ -343,767 +409,381 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
 
       {isExpanded && (
         <div className="admin-section-editor-content">
-          {template.fields.map((field) => (
-            <div key={field.key} className="admin-section-editor-field">
-              <label className="admin-section-editor-field-label">
-                {field.label}
-                {field.required && <span className="admin-section-editor-required">*</span>}
-              </label>
+          {template.fields.map((field: any) => {
+            if (field.condition && !field.condition(section)) {
+              return null
+            }
+            
+            return (
+              <div key={field.key} className="admin-section-editor-field">
+                <label className="admin-section-editor-field-label">
+                  {field.label}
+                  {field.required && <span className="admin-section-editor-required">*</span>}
+                </label>
 
-              {field.type === 'text' && (
-                <input
-                  type="text"
-                  value={section[field.key] || ''}
-                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                  className="admin-section-editor-input"
-                  placeholder={`Masukkan ${field.label.toLowerCase()}`}
-                />
-              )}
+                {field.type === 'text' && (
+                  <input
+                    type="text"
+                    value={section[field.key] || ''}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    className="admin-section-editor-input"
+                    placeholder={`Masukkan ${field.label.toLowerCase()}`}
+                  />
+                )}
 
-              {field.type === 'textarea' && (
-                <textarea
-                  value={section[field.key] || ''}
-                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                  className="admin-section-editor-textarea"
-                  rows={3}
-                  placeholder={`Masukkan ${field.label.toLowerCase()}`}
-                />
-              )}
+                {field.type === 'textarea' && (
+                  <textarea
+                    value={section[field.key] || ''}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    className="admin-section-editor-textarea"
+                    rows={field.rows || 3}
+                    placeholder={`Masukkan ${field.label.toLowerCase()}`}
+                  />
+                )}
 
-              {field.type === 'image' && (
-                <div className="admin-section-editor-image">
-                  {(() => {
-                    const imageUrl = getImageUrl(section[field.key])
-                    return imageUrl ? (
-                      <div className="admin-section-editor-image-preview">
-                        <img
-                          src={imageUrl}
-                          alt="Preview"
-                          className="admin-section-editor-image-preview-img"
-                          onError={(e) => {
-                            console.error('Error loading image:', {
-                              url: imageUrl,
-                              data: section[field.key]
-                            })
-                          }}
-                        />
-                        {fileInfo && (
-                          <div className="admin-section-editor-image-info">
-                            <span className="admin-section-editor-image-name">{fileInfo.name}</span>
-                            <span className="admin-section-editor-image-size">
-                              {(fileInfo.size / 1024).toFixed(1)} KB
-                            </span>
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleFieldChange(field.key, null)
-                            setFileInfo(null)
-                          }}
-                          className="admin-section-editor-image-remove"
-                        >
-                          <X className="admin-section-editor-icon" />
-                        </button>
-                      </div>
-                    ) : (
-                    <div className="admin-section-editor-upload">
-                      <input
-                        type="file"
-                        id={`${field.key}-${index}`}
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0]
-                          if (file) {
-                            // Validate file type
-                            if (!file.type.startsWith('image/')) {
-                              alert('Hanya file gambar yang diperbolehkan')
-                              return
-                            }
-                            
-                            // Validate file size (max 5MB)
-                            if (file.size > 5 * 1024 * 1024) {
-                              alert('Ukuran file terlalu besar. Maksimal 5MB')
-                              return
-                            }
-                            
-                            setUploading(true)
-                            setFileInfo({ name: file.name, size: file.size })
-                            const url = URL.createObjectURL(file)
-                            handleFieldChange(field.key, {
-                              asset: { url },
-                              file: file
-                            })
-                            setUploading(false)
-                          }
-                        }}
-                        className="admin-section-editor-file-input"
-                      />
-                      <label htmlFor={`${field.key}-${index}`} className="admin-section-editor-upload-label">
-                        {uploading ? (
-                          <>
-                            <div className="admin-section-editor-loading">⏳</div>
-                            <span>Mengupload gambar...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="admin-section-editor-icon" />
-                            <span className="admin-section-editor-upload-title">Klik untuk memilih gambar</span>
-                            <span className="admin-section-editor-upload-subtitle">atau drag & drop file di sini</span>
-                            <span className="admin-section-editor-upload-hint">Format: JPG, PNG, GIF (Max 5MB)</span>
-                          </>
-                        )}
-                      </label>
-                    </div>
-                    )
-                  })()}
-                </div>
-              )}
-
-              {field.type === 'video' && (
-                <div className="admin-section-editor-video">
-                  {(() => {
-                    const videoData = section[field.key]
-                    const videoUrl = videoData?.asset?.url
-                    return videoUrl ? (
-                      <div className="admin-section-editor-video-preview">
-                        <video
-                          src={videoUrl}
-                          controls
-                          className="admin-section-editor-video-player"
-                          style={{
-                            width: '100%',
-                            maxHeight: '400px',
-                            borderRadius: '8px',
-                            backgroundColor: '#000'
-                          }}
-                        />
-                        {fileInfo && (
-                          <div className="admin-section-editor-image-info">
-                            <span className="admin-section-editor-image-name">{fileInfo.name}</span>
-                            <span className="admin-section-editor-image-size">
-                              {(fileInfo.size / (1024 * 1024)).toFixed(2)} MB
-                            </span>
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleFieldChange(field.key, null)
-                            setFileInfo(null)
-                          }}
-                          className="admin-section-editor-image-remove"
-                        >
-                          <X className="admin-section-editor-icon" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="admin-section-editor-upload">
-                        <input
-                          type="file"
-                          id={`${field.key}-${index}`}
-                          accept="video/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0]
-                            if (file) {
-                              // Validate file type
-                              if (!file.type.startsWith('video/')) {
-                                alert('Hanya file video yang diperbolehkan')
-                                return
-                              }
-                              
-                              // Validate file size (max 100MB)
-                              if (file.size > 100 * 1024 * 1024) {
-                                alert('Ukuran file terlalu besar. Maksimal 100MB')
-                                return
-                              }
-                              
-                              setUploading(true)
-                              setFileInfo({ name: file.name, size: file.size })
-                              const url = URL.createObjectURL(file)
-                              handleFieldChange(field.key, {
-                                _type: 'file',
-                                asset: { url },
-                                file: file
+                {field.type === 'image' && (
+                  <div className="admin-section-editor-image">
+                    {(() => {
+                      const imageUrl = getImageUrl(section[field.key])
+                      return imageUrl ? (
+                        <div className="admin-section-editor-image-preview">
+                          <img
+                            src={imageUrl}
+                            alt="Preview"
+                            className="admin-section-editor-image-preview-img"
+                            onError={(e) => {
+                              console.error('Error loading image:', {
+                                url: imageUrl,
+                                data: section[field.key]
                               })
-                              setUploading(false)
-                            }
-                          }}
-                          className="admin-section-editor-file-input"
-                        />
-                        <label htmlFor={`${field.key}-${index}`} className="admin-section-editor-upload-label">
-                          {uploading ? (
-                            <>
-                              <div className="admin-section-editor-loading">⏳</div>
-                              <span>Mengupload video...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="admin-section-editor-icon" />
-                              <span className="admin-section-editor-upload-title">Klik untuk memilih video</span>
-                              <span className="admin-section-editor-upload-subtitle">atau drag & drop file di sini</span>
-                              <span className="admin-section-editor-upload-hint">Format: MP4, WebM, MOV (Max 100MB)</span>
-                            </>
+                            }}
+                          />
+                          {fileInfo && (
+                            <div className="admin-section-editor-image-info">
+                              <span className="admin-section-editor-image-name">{fileInfo.name}</span>
+                              <span className="admin-section-editor-image-size">
+                                {(fileInfo.size / 1024).toFixed(1)} KB
+                              </span>
+                            </div>
                           )}
-                        </label>
-                      </div>
-                    )
-                  })()}
-                </div>
-              )}
-
-              {field.type === 'select' && (
-                <select
-                  value={section[field.key] || ''}
-                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                  className="admin-section-editor-input"
-                >
-                  {field.options?.map((option: any) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-              {field.type === 'cta' && (
-                <div className="admin-section-editor-cta">
-                  <div className="admin-section-editor-cta-field">
-                    <label className="admin-section-editor-cta-label">Label</label>
-                    <input
-                      type="text"
-                      value={section.cta?.label || ''}
-                      onChange={(e) => handleCtaChange('label', e.target.value)}
-                      className="admin-section-editor-input"
-                      placeholder="Masukkan label tombol"
-                    />
-                  </div>
-                  <div className="admin-section-editor-cta-field">
-                    <label className="admin-section-editor-cta-label">Link</label>
-                    <input
-                      type="url"
-                      value={section.cta?.href || ''}
-                      onChange={(e) => handleCtaChange('href', e.target.value)}
-                      className="admin-section-editor-input"
-                      placeholder="Masukkan URL"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {field.type === 'features' && (
-                <div className="admin-section-editor-features">
-                  <div className="admin-section-editor-features-header">
-                    <h4>Daftar Fitur</h4>
-                    <button
-                      type="button"
-                      onClick={addFeature}
-                      className="admin-section-editor-add-feature"
-                    >
-                      <Plus className="admin-section-editor-icon" />
-                      Tambah Fitur
-                    </button>
-                  </div>
-                  {(section.features || []).map((feature, featureIndex) => (
-                    <div key={featureIndex} className="admin-section-editor-feature">
-                      <div className="admin-section-editor-feature-header">
-                        <h5>Fitur {featureIndex + 1}</h5>
-                        <button
-                          type="button"
-                          onClick={() => removeFeature(featureIndex)}
-                          className="admin-section-editor-remove-feature"
-                        >
-                          <X className="admin-section-editor-icon" />
-                        </button>
-                      </div>
-                      <div className="admin-section-editor-feature-fields">
-                        <input
-                          type="text"
-                          value={feature.title || ''}
-                          onChange={(e) => updateFeature(featureIndex, 'title', e.target.value)}
-                          className="admin-section-editor-input"
-                          placeholder="Judul fitur"
-                        />
-                        <textarea
-                          value={feature.description || ''}
-                          onChange={(e) => updateFeature(featureIndex, 'description', e.target.value)}
-                          className="admin-section-editor-textarea"
-                          rows={2}
-                          placeholder="Deskripsi fitur"
-                        />
-                        <input
-                          type="text"
-                          value={feature.icon || ''}
-                          onChange={(e) => updateFeature(featureIndex, 'icon', e.target.value)}
-                          className="admin-section-editor-input"
-                          placeholder="Icon (emoji atau class)"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {field.type === 'markers' && (
-                <div className="admin-section-editor-markers">
-                  <div className="admin-section-editor-markers-header">
-                    <h4>Map Markers / Pointers ({(section.markers || []).length})</h4>
-                    <button
-                      type="button"
-                      onClick={addMarker}
-                      className="admin-section-editor-add-marker"
-                    >
-                      <Plus className="admin-section-editor-icon" />
-                      Tambah Marker
-                    </button>
-                  </div>
-                  {(section.markers || []).map((marker: any, markerIndex: number) => (
-                    <div key={marker._key || markerIndex} className="admin-section-editor-marker">
-                      <div className="admin-section-editor-marker-header">
-                        <h5>📍 Marker {marker.number || markerIndex + 1}</h5>
-                        <button
-                          type="button"
-                          onClick={() => removeMarker(markerIndex)}
-                          className="admin-section-editor-remove-marker"
-                        >
-                          <X className="admin-section-editor-icon" />
-                        </button>
-                      </div>
-                      <div className="admin-section-editor-marker-fields">
-                        {/* Number */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Nomor Marker</label>
-                          <input
-                            type="text"
-                            value={marker.number || ''}
-                            onChange={(e) => updateMarker(markerIndex, 'number', e.target.value)}
-                            className="admin-section-editor-input"
-                            placeholder="01"
-                          />
-                        </div>
-
-                        {/* Title */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Nama Lokasi</label>
-                          <input
-                            type="text"
-                            value={marker.title || ''}
-                            onChange={(e) => updateMarker(markerIndex, 'title', e.target.value)}
-                            className="admin-section-editor-input"
-                            placeholder="Plaza Kura-Kura"
-                          />
-                        </div>
-
-                        {/* Description */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Deskripsi</label>
-                          <textarea
-                            value={marker.description || ''}
-                            onChange={(e) => updateMarker(markerIndex, 'description', e.target.value)}
-                            className="admin-section-editor-textarea"
-                            rows={2}
-                            placeholder="Deskripsi lokasi yang muncul di popup"
-                          />
-                        </div>
-
-                        {/* Image Upload */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Gambar Lokasi</label>
-                          {(() => {
-                            const imageUrl = getImageUrl(marker.image)
-                            return imageUrl ? (
-                              <div className="admin-section-editor-image-preview">
-                                <img
-                                  src={imageUrl}
-                                  alt="Marker Preview"
-                                  className="admin-section-editor-image-preview-img"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => updateMarker(markerIndex, 'image', null)}
-                                  className="admin-section-editor-image-remove"
-                                >
-                                  <X className="admin-section-editor-icon" />
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="admin-section-editor-upload">
-                                <input
-                                  type="file"
-                                  id={`marker-image-${index}-${markerIndex}`}
-                                  accept="image/*"
-                                  onChange={async (e) => {
-                                    const file = e.target.files?.[0]
-                                    if (file) {
-                                      if (!file.type.startsWith('image/')) {
-                                        alert('Hanya file gambar yang diperbolehkan')
-                                        return
-                                      }
-                                      if (file.size > 5 * 1024 * 1024) {
-                                        alert('Ukuran file terlalu besar. Maksimal 5MB')
-                                        return
-                                      }
-                                      const url = URL.createObjectURL(file)
-                                      updateMarker(markerIndex, 'image', {
-                                        asset: { url },
-                                        file: file
-                                      })
-                                    }
-                                  }}
-                                  className="admin-section-editor-file-input"
-                                />
-                                <label htmlFor={`marker-image-${index}-${markerIndex}`} className="admin-section-editor-upload-label">
-                                  <Upload size={32} className="admin-section-editor-upload-icon" />
-                                  <span className="admin-section-editor-upload-title">Pilih Gambar</span>
-                                  <span className="admin-section-editor-upload-subtitle">atau drag & drop</span>
-                                  <span className="admin-section-editor-upload-hint">JPG, PNG (Max 5MB)</span>
-                                </label>
-                              </div>
-                            )
-                          })()}
-                        </div>
-
-                        {/* Position */}
-                        <div className="admin-section-editor-position-grid">
-                          <div className="admin-section-editor-field">
-                            <label className="admin-section-editor-field-label">Top (px)</label>
-                            <input
-                              type="number"
-                              value={marker.position?.top || 0}
-                              onChange={(e) => updateMarker(markerIndex, 'position', {
-                                ...marker.position,
-                                top: parseInt(e.target.value) || 0
-                              })}
-                              className="admin-section-editor-input"
-                              placeholder="0"
-                            />
-                          </div>
-                          <div className="admin-section-editor-field">
-                            <label className="admin-section-editor-field-label">Right (px)</label>
-                            <input
-                              type="number"
-                              value={marker.position?.right || 0}
-                              onChange={(e) => updateMarker(markerIndex, 'position', {
-                                ...marker.position,
-                                right: parseInt(e.target.value) || 0
-                              })}
-                              className="admin-section-editor-input"
-                              placeholder="0"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Link (Optional) */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Link Detail (opsional)</label>
-                          <input
-                            type="text"
-                            value={marker.link || ''}
-                            onChange={(e) => updateMarker(markerIndex, 'link', e.target.value)}
-                            className="admin-section-editor-input"
-                            placeholder="/facility/plaza-kura-kura"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {(section.markers || []).length === 0 && (
-                    <div className="admin-section-editor-empty">
-                      <p>Belum ada marker. Klik "Tambah Marker" untuk menambahkan pointer lokasi pada map.</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {field.type === 'gallery' && (
-                <div className="admin-section-editor-gallery">
-                  <div className="admin-section-editor-gallery-header">
-                    <h4>Activity Gallery ({(section.gallery || []).length})</h4>
-                    <button
-                      type="button"
-                      onClick={addGalleryItem}
-                      className="admin-section-editor-add-gallery"
-                    >
-                      <Plus className="admin-section-editor-icon" />
-                      Tambah Activity
-                    </button>
-                  </div>
-                  {(section.gallery || []).map((item: any, galleryIndex: number) => (
-                    <div key={item._key || galleryIndex} className="admin-section-editor-gallery-item">
-                      <div className="admin-section-editor-gallery-item-header">
-                        <h5>🎨 Activity {galleryIndex + 1}</h5>
-                        <button
-                          type="button"
-                          onClick={() => removeGalleryItem(galleryIndex)}
-                          className="admin-section-editor-remove-gallery"
-                        >
-                          <X className="admin-section-editor-icon" />
-                        </button>
-                      </div>
-                      <div className="admin-section-editor-gallery-item-fields">
-                        {/* Title */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Judul Activity</label>
-                          <input
-                            type="text"
-                            value={item.title || ''}
-                            onChange={(e) => updateGalleryItem(galleryIndex, 'title', e.target.value)}
-                            className="admin-section-editor-input"
-                            placeholder="Top of The Statue Tour"
-                          />
-                        </div>
-
-                        {/* Image Upload */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Gambar Activity</label>
-                          {(() => {
-                            const imageUrl = getImageUrl(item.image)
-                            return imageUrl ? (
-                              <div className="admin-section-editor-image-preview">
-                                <img
-                                  src={imageUrl}
-                                  alt="Activity Preview"
-                                  className="admin-section-editor-image-preview-img"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => updateGalleryItem(galleryIndex, 'image', null)}
-                                  className="admin-section-editor-image-remove"
-                                >
-                                  <X className="admin-section-editor-icon" />
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="admin-section-editor-upload">
-                                <input
-                                  type="file"
-                                  id={`gallery-image-${index}-${galleryIndex}`}
-                                  accept="image/*"
-                                  onChange={async (e) => {
-                                    const file = e.target.files?.[0]
-                                    if (file) {
-                                      if (!file.type.startsWith('image/')) {
-                                        alert('Hanya file gambar yang diperbolehkan')
-                                        return
-                                      }
-                                      if (file.size > 5 * 1024 * 1024) {
-                                        alert('Ukuran file terlalu besar. Maksimal 5MB')
-                                        return
-                                      }
-                                      const url = URL.createObjectURL(file)
-                                      updateGalleryItem(galleryIndex, 'image', {
-                                        asset: { url },
-                                        file: file
-                                      })
-                                    }
-                                  }}
-                                  className="admin-section-editor-file-input"
-                                />
-                                <label htmlFor={`gallery-image-${index}-${galleryIndex}`} className="admin-section-editor-upload-label">
-                                  <Upload size={32} className="admin-section-editor-upload-icon" />
-                                  <span className="admin-section-editor-upload-title">Pilih Gambar</span>
-                                  <span className="admin-section-editor-upload-subtitle">atau drag & drop</span>
-                                  <span className="admin-section-editor-upload-hint">JPG, PNG (Max 5MB)</span>
-                                </label>
-                              </div>
-                            )
-                          })()}
-                        </div>
-
-                        {/* Description (Optional) */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Deskripsi (opsional)</label>
-                          <textarea
-                            value={item.description || ''}
-                            onChange={(e) => updateGalleryItem(galleryIndex, 'description', e.target.value)}
-                            className="admin-section-editor-textarea"
-                            rows={2}
-                            placeholder="Deskripsi singkat activity..."
-                          />
-                        </div>
-
-                        {/* CTA (Optional) */}
-                        <div className="admin-section-editor-field">
-                          <label className="admin-section-editor-field-label">Call to Action (opsional)</label>
-                          <div className="admin-section-editor-cta">
-                            <div className="admin-section-editor-cta-field">
-                              <label className="admin-section-editor-cta-label">Label Button</label>
-                              <input
-                                type="text"
-                                value={item.cta?.label || ''}
-                                onChange={(e) => updateGalleryItem(galleryIndex, 'cta', {
-                                  ...item.cta,
-                                  label: e.target.value
-                                })}
-                                className="admin-section-editor-input"
-                                placeholder="Learn More"
-                              />
-                            </div>
-                            <div className="admin-section-editor-cta-field">
-                              <label className="admin-section-editor-cta-label">Link URL</label>
-                              <input
-                                type="text"
-                                value={item.cta?.href || ''}
-                                onChange={(e) => updateGalleryItem(galleryIndex, 'cta', {
-                                  ...item.cta,
-                                  href: e.target.value
-                                })}
-                                className="admin-section-editor-input"
-                                placeholder="/activity/statue-tour"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {(section.gallery || []).length === 0 && (
-                    <div className="admin-section-editor-empty">
-                      <p>Belum ada activity. Klik "Tambah Activity" untuk menambahkan item ke gallery.</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Content Items - Content Section 1 */}
-              {field.type === 'contentItems' && (
-                <div className="admin-section-editor-field">
-                  <label className="admin-section-editor-field-label">{field.label}</label>
-                  <button
-                    type="button"
-                    onClick={addContentItem}
-                    className="admin-section-editor-toggle"
-                    style={{ marginBottom: '12px' }}
-                  >
-                    <Plus size={14} />
-                  </button>
-                  <div className="admin-section-editor-gallery">
-                    {(section.items || []).map((item, itemIndex) => (
-                      <div key={item._key || itemIndex} className="admin-section-editor-gallery-item">
-                        <div className="admin-section-editor-marker-header">
-                          <h4 style={{ margin: 0, color: '#e2e8f0', fontSize: '14px' }}>
-                            Content Item #{itemIndex + 1}
-                          </h4>
                           <button
                             type="button"
-                            onClick={() => removeContentItem(itemIndex)}
-                            className="admin-section-editor-remove"
+                            onClick={() => {
+                              handleFieldChange(field.key, null)
+                              setFileInfo(null)
+                            }}
+                            className="admin-section-editor-image-remove"
                           >
-                            <X size={14} />
+                            <X className="admin-section-editor-icon" />
                           </button>
                         </div>
-
-                        <div style={{ display: 'grid', gap: '16px' }}>
-                          {/* Image Upload */}
-                          <div className="admin-section-editor-field">
-                            <label className="admin-section-editor-field-label">Gambar <span style={{color: '#ef4444'}}>*</span></label>
-                            {(() => {
-                              const imageUrl = getImageUrl(item.image)
-                              if (imageUrl) {
-                                return (
-                                  <div className="admin-section-editor-image-preview">
-                                    <img 
-                                      src={imageUrl} 
-                                      alt="Preview" 
-                                      className="admin-section-editor-preview-image"
-                                      onError={(e) => {
-                                        console.error('Image failed to load:', imageUrl)
-                                        e.currentTarget.style.display = 'none'
-                                      }}
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() => updateContentItem(itemIndex, 'image', null)}
-                                      className="admin-section-editor-image-remove"
-                                    >
-                                      <X size={14} />
-                                    </button>
-                                  </div>
-                                )
+                      ) : (
+                        <div className="admin-section-editor-upload">
+                          <input
+                            type="file"
+                            id={`${field.key}-${index}`}
+                            accept="image/*"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0]
+                              if (file) {
+                                // Validate file type
+                                if (!file.type.startsWith('image/')) {
+                                  alert('Hanya file gambar yang diperbolehkan')
+                                  return
+                                }
+                                
+                                // Validate file size (max 5MB)
+                                if (file.size > 5 * 1024 * 1024) {
+                                  alert('Ukuran file terlalu besar. Maksimal 5MB')
+                                  return
+                                }
+                                
+                                setUploading(true)
+                                setFileInfo({ name: file.name, size: file.size })
+                                const url = URL.createObjectURL(file)
+                                handleFieldChange(field.key, {
+                                  asset: { url },
+                                  file: file
+                                })
+                                setUploading(false)
                               }
-                              
-                              const inputId = `content-item-image-${index}-${itemIndex}`
-                              return (
-                                <div className="admin-section-editor-upload">
-                                  <input
-                                    id={inputId}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={async (e) => {
-                                      const file = e.target.files?.[0]
-                                      if (!file) return
-
-                                      if (!file.type.startsWith('image/')) {
-                                        alert('File harus berupa gambar!')
-                                        return
-                                      }
-                                      if (file.size > 5 * 1024 * 1024) {
-                                        alert('Ukuran file maksimal 5MB!')
-                                        return
-                                      }
-
-                                      const blobUrl = URL.createObjectURL(file)
-                                      updateContentItem(itemIndex, 'image', {
-                                        _type: 'image',
-                                        asset: { url: blobUrl },
-                                        file
-                                      })
-                                    }}
-                                    style={{ display: 'none' }}
-                                  />
-                                  <label htmlFor={inputId} className="admin-section-editor-upload-label">
-                                    <Upload size={32} />
-                                    <span className="admin-section-editor-upload-title">
-                                      Klik untuk memilih gambar
-                                    </span>
-                                    <span className="admin-section-editor-upload-subtitle">
-                                      atau drag & drop file di sini
-                                    </span>
-                                    <span className="admin-section-editor-upload-hint">
-                                      Format: JPG, PNG, GIF (Max 5MB)
-                                    </span>
-                                  </label>
-                                </div>
-                              )
-                            })()}
-                          </div>
-
-                          {/* Title */}
-                          <div className="admin-section-editor-field">
-                            <label className="admin-section-editor-field-label">Judul <span style={{color: '#ef4444'}}>*</span></label>
-                            <input
-                              type="text"
-                              value={item.title || ''}
-                              onChange={(e) => updateContentItem(itemIndex, 'title', e.target.value)}
-                              className="admin-section-editor-input"
-                              placeholder="Judul content item..."
-                            />
-                          </div>
-
-                          {/* Description (Optional) */}
-                          <div className="admin-section-editor-field">
-                            <label className="admin-section-editor-field-label">Deskripsi (opsional)</label>
-                            <textarea
-                              value={item.description || ''}
-                              onChange={(e) => updateContentItem(itemIndex, 'description', e.target.value)}
-                              className="admin-section-editor-textarea"
-                              rows={3}
-                              placeholder="Deskripsi singkat content item..."
-                            />
-                          </div>
+                            }}
+                            className="admin-section-editor-file-input"
+                          />
+                          <label htmlFor={`${field.key}-${index}`} className="admin-section-editor-upload-label">
+                            {uploading ? (
+                              <>
+                                <div className="admin-section-editor-loading">⏳</div>
+                                <span>Mengupload gambar...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="admin-section-editor-icon" />
+                                <span className="admin-section-editor-upload-title">Klik untuk memilih gambar</span>
+                                <span className="admin-section-editor-upload-subtitle">atau drag & drop file di sini</span>
+                                <span className="admin-section-editor-upload-hint">Format: JPG, PNG, GIF (Max 5MB)</span>
+                              </>
+                            )}
+                          </label>
                         </div>
-                      </div>
-                    ))}
-                    {(section.items || []).length === 0 && (
-                      <div className="admin-section-editor-empty">
-                        <p>Belum ada content item. Klik tombol "+" untuk menambahkan.</p>
-                      </div>
-                    )}
+                      )
+                    })()}
                   </div>
+                )}
+
+                {field.type === 'video' && (
+                  <div className="admin-section-editor-video">
+                    {(() => {
+                      const videoData = section[field.key]
+                      const videoUrl = videoData?.asset?.url
+                      return videoUrl ? (
+                        <div className="admin-section-editor-video-preview">
+                          <video
+                            src={videoUrl}
+                            controls
+                            className="admin-section-editor-video-player"
+                            style={{
+                              width: '100%',
+                              maxHeight: '400px',
+                              borderRadius: '8px',
+                              backgroundColor: '#000'
+                            }}
+                          />
+                          {fileInfo && (
+                            <div className="admin-section-editor-image-info">
+                              <span className="admin-section-editor-image-name">{fileInfo.name}</span>
+                              <span className="admin-section-editor-image-size">
+                                {(fileInfo.size / (1024 * 1024)).toFixed(2)} MB
+                              </span>
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleFieldChange(field.key, null)
+                              setFileInfo(null)
+                            }}
+                            className="admin-section-editor-image-remove"
+                          >
+                            <X className="admin-section-editor-icon" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="admin-section-editor-upload">
+                          <input
+                            type="file"
+                            id={`${field.key}-${index}`}
+                            accept="video/*"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0]
+                              if (file) {
+                                // Validate file type
+                                if (!file.type.startsWith('video/')) {
+                                  alert('Hanya file video yang diperbolehkan')
+                                  return
+                                }
+                                
+                                // Validate file size (max 100MB)
+                                if (file.size > 100 * 1024 * 1024) {
+                                  alert('Ukuran file terlalu besar. Maksimal 100MB')
+                                  return
+                                }
+                                
+                                setUploading(true)
+                                setFileInfo({ name: file.name, size: file.size })
+                                const url = URL.createObjectURL(file)
+                                handleFieldChange(field.key, {
+                                  _type: 'file',
+                                  asset: { url },
+                                  file: file
+                                })
+                                setUploading(false)
+                              }
+                            }}
+                            className="admin-section-editor-file-input"
+                          />
+                          <label htmlFor={`${field.key}-${index}`} className="admin-section-editor-upload-label">
+                            {uploading ? (
+                              <>
+                                <div className="admin-section-editor-loading">⏳</div>
+                                <span>Mengupload video...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="admin-section-editor-icon" />
+                                <span className="admin-section-editor-upload-title">Klik untuk memilih video</span>
+                                <span className="admin-section-editor-upload-subtitle">atau drag & drop file di sini</span>
+                                <span className="admin-section-editor-upload-hint">Format: MP4, WebM, MOV (Max 100MB)</span>
+                              </>
+                            )}
+                          </label>
+                        </div>
+                      )
+                    })()}
+                  </div>
+                )}
+
+                {field.type === 'select' && (
+                  <select
+                    value={section[field.key] || ''}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    className="admin-section-editor-input"
+                  >
+                    {field.options?.map((option: any) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                {field.type === 'cta' && (
+                  <div className="admin-section-editor-cta">
+                    <div className="admin-section-editor-cta-field">
+                      <label className="admin-section-editor-cta-label">Label</label>
+                      <input
+                        type="text"
+                        value={section.cta?.label || ''}
+                        onChange={(e) => handleCtaChange('label', e.target.value)}
+                        className="admin-section-editor-input"
+                        placeholder="Masukkan label tombol"
+                      />
+                    </div>
+                    <div className="admin-section-editor-cta-field">
+                      <label className="admin-section-editor-cta-label">Link</label>
+                      <input
+                        type="url"
+                        value={section.cta?.href || ''}
+                        onChange={(e) => handleCtaChange('href', e.target.value)}
+                        className="admin-section-editor-input"
+                        placeholder="Masukkan URL"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Content Items - Content Section 2 */}
+                {field.type === 'contentItems2' && (
+                  <div className="admin-section-editor-field">
+                    <div className="admin-section-editor-gallery-header" style={{ marginTop: '16px' }}>
+                      <h4>{field.label} ({(section.items || []).length})</h4>
+                      <button
+                        type="button"
+                        onClick={addContentItem2}
+                        className="admin-section-editor-add-gallery"
+                      >
+                        <Plus className="admin-section-editor-icon" />
+                        Tambah Item
+                      </button>
+                    </div>
+                    <div className="admin-section-editor-gallery">
+                      {(section.items || []).map((item: any, itemIndex: number) => (
+                        <div key={item._key || itemIndex} className="admin-section-editor-gallery-item">
+                          <div className="admin-section-editor-gallery-item-header">
+                            <h5>Item #{itemIndex + 1}</h5>
+                            <button
+                              type="button"
+                              onClick={() => removeContentItem2(itemIndex)}
+                              className="admin-section-editor-remove-gallery"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+
+                          <div className="admin-section-editor-gallery-item-fields">
+                            {/* Image Upload */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">Gambar Item <span className="admin-section-editor-required">*</span></label>
+                              {(() => {
+                                const imageUrl = getImageUrl(item.image)
+                                if (imageUrl) {
+                                  return (
+                                    <div className="admin-section-editor-image-preview">
+                                      <img src={imageUrl} alt="Preview" className="admin-section-editor-image-preview-img" />
+                                      <button
+                                        type="button"
+                                        onClick={() => updateContentItem2(itemIndex, 'image', null)}
+                                        className="admin-section-editor-image-remove"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                    </div>
+                                  )
+                                }
+                                const inputId = `cs2-item-image-${index}-${itemIndex}`
+                                return (
+                                  <div className="admin-section-editor-upload">
+                                    <input
+                                      id={inputId}
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={async (e) => {
+                                        const file = e.target.files?.[0]
+                                        if (!file) return
+                                        const blobUrl = URL.createObjectURL(file)
+                                        updateContentItem2(itemIndex, 'image', {
+                                            _type: 'image',
+                                            asset: { url: blobUrl },
+                                            file
+                                          })
+                                        }}
+                                        className="admin-section-editor-file-input"
+                                      />
+                                      <label htmlFor={inputId} className="admin-section-editor-upload-label">
+                                        <Upload size={32} />
+                                        <span>Pilih Gambar</span>
+                                      </label>
+                                    </div>
+                                  )
+                                })()}
+                              </div>
+
+                              {/* Title */}
+                              <div className="admin-section-editor-field">
+                                <label className="admin-section-editor-field-label">Judul Item <span className="admin-section-editor-required">*</span></label>
+                                <input
+                                  type="text"
+                                  value={item.title || ''}
+                                  onChange={(e) => updateContentItem2(itemIndex, 'title', e.target.value)}
+                                  className="admin-section-editor-input"
+                                  placeholder="Judul item..."
+                                />
+                              </div>
+
+                              {/* CTA */}
+                              <div className="admin-section-editor-field">
+                                <label className="admin-section-editor-field-label">Call to Action (CTA) <span className="admin-section-editor-required">*</span></label>
+                                <div className="admin-section-editor-cta">
+                                  <input
+                                    type="text"
+                                    value={item.cta?.label || ''}
+                                    onChange={(e) => updateContentItem2(itemIndex, 'cta', e.target.value, 'label')}
+                                    className="admin-section-editor-input"
+                                    placeholder="Label Tombol (e.g., 'Lihat Detail')"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={item.cta?.link || ''}
+                                    onChange={(e) => updateContentItem2(itemIndex, 'cta', e.target.value, 'link')}
+                                    className="admin-section-editor-input"
+                                    placeholder="Link URL (e.g., '/halaman/detail')"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        {(section.items || []).length === 0 && (
+                          <div className="admin-section-editor-empty">
+                            <p>Belum ada item. Klik "Tambah Item" untuk menambahkan.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+              )
+            })}
         </div>
       )}
     </div>

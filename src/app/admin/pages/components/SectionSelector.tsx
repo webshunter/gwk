@@ -50,6 +50,13 @@ const availableSections = [
     color: 'blue'
   },
   {
+    type: 'heroSection3',
+    title: 'Hero Section 3',
+    description: 'Alternative hero layout dengan background image dan CTA',
+    icon: '🎯',
+    color: 'blue'
+  },
+  {
     type: 'featureSection',
     title: 'Feature Section',
     description: 'Menampilkan daftar fitur atau keunggulan dengan ikon',
@@ -83,6 +90,13 @@ const availableSections = [
     description: 'Content items dengan gambar, title, dan deskripsi',
     icon: '📄',
     color: 'gray'
+  },
+  {
+    type: 'contentSection2',
+    title: 'Content Section 2',
+    description: 'Deskripsi, media utama (gambar/video), dan daftar item dengan CTA.',
+    icon: '📑',
+    color: 'yellow'
   },
   {
     type: 'textSection',
@@ -157,7 +171,8 @@ export default function SectionSelector({ onAddSection, onClose }: SectionSelect
       orange: 'admin-section-selector-orange',
       red: 'admin-section-selector-red',
       indigo: 'admin-section-selector-indigo',
-      teal: 'admin-section-selector-teal'
+      teal: 'admin-section-selector-teal',
+      yellow: 'admin-section-selector-yellow'
     }
     return colorMap[color as keyof typeof colorMap] || 'admin-section-selector-gray'
   }

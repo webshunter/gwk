@@ -80,6 +80,7 @@ export async function POST(request: NextRequest) {
       // Handle different section types
       switch (section._type) {
         case 'heroSection':
+        case 'heroSection3':
           // Format media untuk Sanity
           let formattedMedia = null
           if (section.media) {
@@ -323,6 +324,51 @@ export async function POST(request: NextRequest) {
             description: section.description || '',
             video: formattedVideo,
             items: formattedItems
+          }
+        case 'contentSection2':
+          // Format mainImage
+          let formattedMainImage = null
+          if (section.mainImage?.asset?._ref) {
+            formattedMainImage = { _type: 'image', asset: { _type: 'reference', _ref: section.mainImage.asset._ref } }
+          } else if (section.mainImage?.asset?._id) {
+            formattedMainImage = { _type: 'image', asset: { _type: 'reference', _ref: section.mainImage.asset._id } }
+          }
+
+          // Format mainVideo
+          let formattedMainVideo = null
+          if (section.mainVideo?.asset?._ref) {
+            formattedMainVideo = { _type: 'file', asset: { _type: 'reference', _ref: section.mainVideo.asset._ref } }
+          } else if (section.mainVideo?.asset?._id) {
+            formattedMainVideo = { _type: 'file', asset: { _type: 'reference', _ref: section.mainVideo.asset._id } }
+          }
+
+          // Format items
+          const formattedContentItems2 = (section.items || []).map((item: any) => {
+            let itemImage = null
+            if (item.image?.asset?._ref) {
+              itemImage = { _type: 'image', asset: { _type: 'reference', _ref: item.image.asset._ref } }
+            } else if (item.image?.asset?._id) {
+              itemImage = { _type: 'image', asset: { _type: 'reference', _ref: item.image.asset._id } }
+            }
+
+            return {
+              _key: item._key || Math.random().toString(36).substring(2, 11),
+              title: item.title || '',
+              image: itemImage,
+              cta: item.cta ? {
+                _type: 'object',
+                label: item.cta.label || '',
+                link: item.cta.link || ''
+              } : null,
+            }
+          })
+
+          return {
+            ...baseSection,
+            description: section.description || '',
+            mainImage: formattedMainImage,
+            mainVideo: formattedMainVideo,
+            items: formattedContentItems2,
           }
         default:
           return baseSection

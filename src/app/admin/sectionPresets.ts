@@ -11,7 +11,7 @@ type SanityImageValue = {
   alt?: string
 }
 
-export type SectionType = "heroSection" | "featureSection" | "testimonialSection" | "mapSection" | "activitySection" | "contentSection1"
+export type SectionType = "heroSection" | "heroSection3" | "featureSection" | "testimonialSection" | "mapSection" | "activitySection" | "contentSection1" | "contentSection2"
 
 export type MapSection = {
   _type: "mapSection"
@@ -71,17 +71,54 @@ export type ContentSection1 = {
   }>
 }
 
+export type ContentSection2 = {
+  _type: "contentSection2"
+  _key: string
+  description: string
+  mediaType: "image" | "video"
+  mainImage?: SanityImageValue | null
+  mainVideo?: {
+    _type: "file"
+    asset?: SanityReference
+  } | null
+  items: Array<{
+    _key: string
+    title: string
+    image?: SanityImageValue | null
+    cta: {
+      label: string
+      link: string
+    }
+  }>
+}
+
 export type SectionMap = {
   heroSection: HeroSection
+  heroSection3: HeroSection3
   featureSection: FeatureSection
   testimonialSection: TestimonialSection
   mapSection: MapSection
   activitySection: ActivitySection
   contentSection1: ContentSection1
+  contentSection2: ContentSection2
 }
 
 export type HeroSection = {
   _type: "heroSection"
+  _key: string
+  preTitle: string
+  title: string
+  subtitle: string
+  theme: "light" | "dark"
+  media?: SanityImageValue | null
+  cta: {
+    label: string
+    href: string
+  }
+}
+
+export type HeroSection3 = {
+  _type: "heroSection3"
   _key: string
   preTitle: string
   title: string
@@ -138,6 +175,19 @@ export const sectionFactories: Record<SectionType, () => SectionPayload> = {
       href: "",
     },
   }),
+  heroSection3: () => ({
+    _type: "heroSection3",
+    _key: nanoid(),
+    preTitle: "",
+    title: "",
+    subtitle: "",
+    theme: "dark",
+    media: null,
+    cta: {
+      label: "",
+      href: "",
+    },
+  }),
   featureSection: () => ({
     _type: "featureSection",
     _key: nanoid(),
@@ -172,6 +222,15 @@ export const sectionFactories: Record<SectionType, () => SectionPayload> = {
     _key: nanoid(),
     description: "",
     video: null,
+    items: [],
+  }),
+  contentSection2: () => ({
+    _type: "contentSection2",
+    _key: nanoid(),
+    description: "",
+    mediaType: "image",
+    mainImage: null,
+    mainVideo: null,
     items: [],
   }),
 }
@@ -219,6 +278,22 @@ export const sectionPalette: Array<{
       cta: {
         label: "Explore GWK",
         href: "#explore"
+      }
+    }
+  },
+  {
+    type: "heroSection3",
+    title: "Hero Section 3",
+    description: "Alternative hero section layout with background image, title, and CTA",
+    icon: null,
+    defaultData: {
+      preTitle: "Discover",
+      title: "Cultural Heritage",
+      subtitle: "Experience the Beauty of Balinese Arts and Culture",
+      theme: "dark",
+      cta: {
+        label: "Learn More",
+        href: "#learn"
       }
     }
   },
@@ -272,6 +347,17 @@ export const sectionPalette: Array<{
     icon: null,
     defaultData: {
       description: "",
+      items: []
+    }
+  },
+  {
+    type: "contentSection2",
+    title: "Content Section 2",
+    description: "Description, main media (image/video), and a list of items with image, title, and CTA.",
+    icon: null,
+    defaultData: {
+      description: "Section description goes here.",
+      mediaType: "image",
       items: []
     }
   }
