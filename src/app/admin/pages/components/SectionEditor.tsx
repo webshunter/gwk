@@ -662,6 +662,178 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                   </div>
                 )}
 
+                {/* Map Markers */}
+                {field.type === 'markers' && (
+                  <div className="admin-section-editor-markers">
+                    <div className="admin-section-editor-markers-header">
+                      <h4>Map Markers / Pointers ({(section.markers || []).length})</h4>
+                      <button
+                        type="button"
+                        onClick={addMarker}
+                        className="admin-section-editor-add-marker"
+                      >
+                        <Plus className="admin-section-editor-icon" />
+                        Tambah Marker
+                      </button>
+                    </div>
+                    {(section.markers || []).map((marker: any, markerIndex: number) => (
+                      <div key={marker._key || markerIndex} className="admin-section-editor-marker">
+                        <div className="admin-section-editor-marker-header">
+                          <h5>📍 Marker {marker.number || markerIndex + 1}</h5>
+                          <button
+                            type="button"
+                            onClick={() => removeMarker(markerIndex)}
+                            className="admin-section-editor-remove-marker"
+                          >
+                            <X className="admin-section-editor-icon" />
+                          </button>
+                        </div>
+                        <div className="admin-section-editor-marker-fields">
+                          {/* Number */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Nomor Marker</label>
+                            <input
+                              type="text"
+                              value={marker.number || ''}
+                              onChange={(e) => updateMarker(markerIndex, 'number', e.target.value)}
+                              className="admin-section-editor-input"
+                              placeholder="01"
+                            />
+                          </div>
+
+                          {/* Title */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Nama Lokasi</label>
+                            <input
+                              type="text"
+                              value={marker.title || ''}
+                              onChange={(e) => updateMarker(markerIndex, 'title', e.target.value)}
+                              className="admin-section-editor-input"
+                              placeholder="Plaza Kura-Kura"
+                            />
+                          </div>
+
+                          {/* Description */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Deskripsi</label>
+                            <textarea
+                              value={marker.description || ''}
+                              onChange={(e) => updateMarker(markerIndex, 'description', e.target.value)}
+                              className="admin-section-editor-textarea"
+                              rows={2}
+                              placeholder="Deskripsi lokasi yang muncul di popup"
+                            />
+                          </div>
+
+                          {/* Image Upload */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Gambar Lokasi</label>
+                            {(() => {
+                              const imageUrl = getImageUrl(marker.image)
+                              return imageUrl ? (
+                                <div className="admin-section-editor-image-preview">
+                                  <img
+                                    src={imageUrl}
+                                    alt="Marker Preview"
+                                    className="admin-section-editor-image-preview-img"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => updateMarker(markerIndex, 'image', null)}
+                                    className="admin-section-editor-image-remove"
+                                  >
+                                    <X className="admin-section-editor-icon" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="admin-section-editor-upload">
+                                  <input
+                                    type="file"
+                                    id={`marker-image-${index}-${markerIndex}`}
+                                    accept="image/*"
+                                    onChange={async (e) => {
+                                      const file = e.target.files?.[0]
+                                      if (file) {
+                                        if (!file.type.startsWith('image/')) {
+                                          alert('Hanya file gambar yang diperbolehkan')
+                                          return
+                                        }
+                                        if (file.size > 5 * 1024 * 1024) {
+                                          alert('Ukuran file terlalu besar. Maksimal 5MB')
+                                          return
+                                        }
+                                        const url = URL.createObjectURL(file)
+                                        updateMarker(markerIndex, 'image', {
+                                          asset: { url },
+                                          file: file
+                                        })
+                                      }
+                                    }}
+                                    className="admin-section-editor-file-input"
+                                  />
+                                  <label htmlFor={`marker-image-${index}-${markerIndex}`} className="admin-section-editor-upload-label">
+                                    <Upload size={32} className="admin-section-editor-upload-icon" />
+                                    <span className="admin-section-editor-upload-title">Pilih Gambar</span>
+                                    <span className="admin-section-editor-upload-subtitle">atau drag & drop</span>
+                                    <span className="admin-section-editor-upload-hint">JPG, PNG (Max 5MB)</span>
+                                  </label>
+                                </div>
+                              )
+                            })()}
+                          </div>
+
+                          {/* Position */}
+                          <div className="admin-section-editor-position-grid">
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">Top (px)</label>
+                              <input
+                                type="number"
+                                value={marker.position?.top || 0}
+                                onChange={(e) => updateMarker(markerIndex, 'position', {
+                                  ...marker.position,
+                                  top: parseInt(e.target.value) || 0
+                                })}
+                                className="admin-section-editor-input"
+                                placeholder="0"
+                              />
+                            </div>
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">Right (px)</label>
+                              <input
+                                type="number"
+                                value={marker.position?.right || 0}
+                                onChange={(e) => updateMarker(markerIndex, 'position', {
+                                  ...marker.position,
+                                  right: parseInt(e.target.value) || 0
+                                })}
+                                className="admin-section-editor-input"
+                                placeholder="0"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Link (Optional) */}
+                          <div className="admin-section-editor-field">
+                            <label className="admin-section-editor-field-label">Link Detail (opsional)</label>
+                            <input
+                              type="text"
+                              value={marker.link || ''}
+                              onChange={(e) => updateMarker(markerIndex, 'link', e.target.value)}
+                              className="admin-section-editor-input"
+                              placeholder="/facility/plaza-kura-kura"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {(section.markers || []).length === 0 && (
+                      <div className="admin-section-editor-empty">
+                        <p>Belum ada marker. Klik "Tambah Marker" untuk menambahkan pointer lokasi pada map.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Activity Gallery */}
                 {field.type === 'gallery' && (
                   <div className="admin-section-editor-gallery">
