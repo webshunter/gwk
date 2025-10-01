@@ -9,7 +9,16 @@ interface SectionSelectorProps {
   onClose: () => void
 }
 
-// Template configurations
+// Template conf                  <div className="admin-section-selector-template-sections">
+                    {template.sections.map((sectionType, index) => {
+                      const section = availableSections.find(s => s.type === sectionType)
+                      return section ? (
+                        <span key={`${sectionType}-${index}`} className="admin-section-selector-template-badge">
+                          {section.icon} {section.title}
+                        </span>
+                      ) : null
+                    })}
+                  </div>
 const pageTemplates = [
   {
     id: 'template-1',
@@ -256,10 +265,10 @@ export default function SectionSelector({ onAddSection, onClose }: SectionSelect
                       {template.description}
                     </p>
                     <div className="admin-section-selector-template-sections">
-                      {template.sections.map((sectionType) => {
+                      {template.sections.map((sectionType, index) => {
                         const section = availableSections.find(s => s.type === sectionType)
                         return section ? (
-                          <span key={sectionType} className="admin-section-selector-template-badge">
+                          <span key={`${sectionType}-${index}`} className="admin-section-selector-template-badge">
                             {section.icon} {section.title}
                           </span>
                         ) : null
