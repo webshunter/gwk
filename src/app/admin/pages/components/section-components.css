@@ -1276,6 +1276,14 @@
   margin-top: 10px;
 }
 
+/* Gallery Grid - 2 columns for gallery photos */
+.admin-section-editor-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 10px;
+}
+
 .admin-section-editor-gallery-header {
   display: flex;
   align-items: center;
@@ -1378,6 +1386,10 @@
   .admin-section-editor-add-gallery {
     width: 100%;
     justify-content: center;
+  }
+
+  .admin-section-editor-gallery-grid {
+    grid-template-columns: 1fr;
   }
 }
 

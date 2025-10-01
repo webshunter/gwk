@@ -1630,7 +1630,7 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                         Tambah Foto
                       </button>
                     </div>
-                    <div className="admin-section-editor-gallery">
+                    <div className="admin-section-editor-gallery-grid">
                       {(section.gallery || []).map((photo: any, photoIndex: number) => (
                         <div key={photo._key || photoIndex} className="admin-section-editor-gallery-item">
                           <div className="admin-section-editor-gallery-item-header">
