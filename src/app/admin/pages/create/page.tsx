@@ -16,7 +16,7 @@ interface Section {
   _type: string
   title?: string
   content?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default function CreatePage() {
@@ -32,10 +32,10 @@ export default function CreatePage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const handleSectionsUpdate = useCallback((updater: (prevSections: Section[]) => Section[]) => {
+  const handleSectionsUpdate = useCallback((sections: Section[]) => {
     setFormData(prev => ({
       ...prev,
-      sections: updater(prev.sections)
+      sections
     }))
   }, [])
 

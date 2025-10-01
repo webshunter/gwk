@@ -8,6 +8,8 @@ import '../../../design/custom-admin.css'
 
 interface Section {
   _type: string;
+  _id?: string;
+  _key?: string;
   title?: string;
   subtitle?: string;
   description?: string;
@@ -15,18 +17,24 @@ interface Section {
   media?: {
     asset?: {
       url?: string;
+      _ref?: string;
     };
-  };
+    file?: File;
+  } | null;
   cta?: {
     label?: string;
     href?: string;
   };
   features?: Array<{
+    _type?: string;
+    _key?: string;
     title?: string;
+    heading?: string;
     description?: string;
-    icon?: string;
+    body?: string;
+    icon?: string | null | unknown;
   }>;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface Page {
@@ -79,16 +87,17 @@ export default function EditPage() {
       setSlug(data.slug?.current || '')
       setSummary(data.summary || '')
       setSections(data.sections || [])
-    } catch (err: any) {
-      setError(err.message || 'An unknown error occurred')
+    } catch (err: unknown) {
+      const error = err as Error
+      setError(error.message || 'An unknown error occurred')
     } finally {
       setLoading(false)
     }
   }
 
 
-  const handleSectionsUpdate = useCallback((updater: (prevSections: Section[]) => Section[]) => {
-    setSections(prevSections => updater(prevSections))
+  const handleSectionsUpdate = useCallback((sections: Section[]) => {
+    setSections(sections)
   }, [])
 
   const validateBasicInfo = () => {
@@ -157,7 +166,7 @@ export default function EditPage() {
         const errorData = await response.json()
         setError(errorData.error || 'Gagal memperbarui halaman')
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating page:', err)
       setError('Terjadi kesalahan saat memperbarui halaman')
     } finally {

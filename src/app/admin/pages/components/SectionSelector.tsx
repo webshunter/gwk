@@ -276,7 +276,7 @@ export default function SectionSelector({ onAddSection, onClose }: SectionSelect
             /* Sections View */
             filteredSections.length === 0 ? (
               <div className="admin-section-selector-empty">
-                <p>Tidak ada section yang ditemukan untuk "{searchTerm}"</p>
+                <p>Tidak ada section yang ditemukan untuk &quot;{searchTerm}&quot;</p>
               </div>
             ) : (
               <div className="admin-section-selector-grid">

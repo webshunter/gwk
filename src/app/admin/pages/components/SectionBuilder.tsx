@@ -23,8 +23,7 @@ import { CSS } from "@dnd-kit/utilities"
 import { 
   GripVertical, 
   Plus, 
-  Trash2,
-  Edit2
+  Trash2
 } from "lucide-react"
 import SectionEditor from "./SectionEditor"
 import SectionSelector from "./SectionSelector"
@@ -44,17 +43,21 @@ interface Section {
       _ref?: string
     }
     file?: File
-  }
+  } | null
   cta?: {
     label?: string
     href?: string
   }
   features?: Array<{
+    _type?: string
+    _key?: string
     title?: string
+    heading?: string
     description?: string
-    icon?: string
+    body?: string
+    icon?: string | null | unknown
   }>
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface SectionBuilderProps {
@@ -183,10 +186,10 @@ export default function SectionBuilder({ sections, onUpdateSections }: SectionBu
     }
   }, [])
 
-  const addSection = useCallback((type: string) => {
+  const addSection = useCallback(async (type: string) => {
     console.log('🔵 [SectionBuilder] addSection called with type:', type)
     
-    const { sectionFactories } = require('@/app/admin/sectionPresets')
+    const { sectionFactories } = await import('@/app/admin/sectionPresets')
     
     let newSection: Section
     if (sectionFactories[type as keyof typeof sectionFactories]) {
@@ -207,23 +210,21 @@ export default function SectionBuilder({ sections, onUpdateSections }: SectionBu
       newSection._id = Math.random().toString(36).substring(2, 11)
     }
     
-    onUpdateSections(prevSections => {
-      const updated = [...prevSections, newSection]
-      console.log('🔵 [SectionBuilder] Sections updated. New total:', updated.length)
-      console.log('🔵 [SectionBuilder] Added section type:', newSection._type)
-      setActiveIndex(updated.length - 1)
-      return updated
-    })
+    const updated = [...sections, newSection]
+    console.log('🔵 [SectionBuilder] Sections updated. New total:', updated.length)
+    console.log('🔵 [SectionBuilder] Added section type:', newSection._type)
+    setActiveIndex(updated.length - 1)
+    onUpdateSections(updated)
     
     setShowSectionSelector(false)
   }, [onUpdateSections])
 
-  const updateSection = useCallback(async (index: number, field: string, value: any) => {
+  const updateSection = useCallback(async (index: number, field: string, value: unknown) => {
     console.log(`🔵 [SectionBuilder] updateSection called for index ${index}, field: ${field}`)
     // If it's an image or video field with a file, upload it first
-    if ((field === 'media' || field === 'image' || field === 'mapImage' || field === 'flyer' || field === 'video' || field === 'mainImage' || field === 'mainVideo') && value?.file) {
+    if ((field === 'media' || field === 'image' || field === 'mapImage' || field === 'flyer' || field === 'video' || field === 'mainImage' || field === 'mainVideo') && value && typeof value === 'object' && 'file' in value && value.file) {
       try {
-        value = await uploadFile(value.file)
+        value = await uploadFile((value as { file: File }).file)
       } catch (error) {
         console.error(`Error uploading ${field} file:`, error)
         alert(`Gagal mengupload ${field} file. Silakan coba lagi.`) // Lebih spesifik
@@ -236,9 +237,9 @@ export default function SectionBuilder({ sections, onUpdateSections }: SectionBu
     if (field === 'markers' && Array.isArray(value)) {
       try {
         const uploadedMarkers = await Promise.all(
-          value.map(async (marker: any) => {
-            if (marker.image?.file) {
-              return { ...marker, image: await uploadFile(marker.image.file) }
+          value.map(async (marker: unknown) => {
+            if (marker && typeof marker === 'object' && 'image' in marker && marker.image && typeof marker.image === 'object' && 'file' in marker.image && marker.image.file) {
+              return { ...marker, image: await uploadFile((marker.image as { file: File }).file) }
             }
             return marker
           })
@@ -255,9 +256,9 @@ export default function SectionBuilder({ sections, onUpdateSections }: SectionBu
     if (field === 'gallery' && Array.isArray(value)) {
       try {
         const uploadedGallery = await Promise.all(
-          value.map(async (item: any) => {
-            if (item.image?.file) {
-              return { ...item, image: await uploadFile(item.image.file) }
+          value.map(async (item: unknown) => {
+            if (item && typeof item === 'object' && 'image' in item && item.image && typeof item.image === 'object' && 'file' in item.image && item.image.file) {
+              return { ...item, image: await uploadFile((item.image as { file: File }).file) }
             }
             return item
           })
@@ -274,9 +275,9 @@ export default function SectionBuilder({ sections, onUpdateSections }: SectionBu
     if (field === 'items' && Array.isArray(value)) {
       try {
         const uploadedItems = await Promise.all(
-          value.map(async (item: any) => {
-            if (item.image?.file) {
-              return { ...item, image: await uploadFile(item.image.file) }
+          value.map(async (item: unknown) => {
+            if (item && typeof item === 'object' && 'image' in item && item.image && typeof item.image === 'object' && 'file' in item.image && item.image.file) {
+              return { ...item, image: await uploadFile((item.image as { file: File }).file) }
             }
             return item
           })
@@ -289,48 +290,41 @@ export default function SectionBuilder({ sections, onUpdateSections }: SectionBu
       }
     }
 
-    onUpdateSections(prevSections => {
-      const newSections = prevSections.map((section, i) => 
-        i === index ? { ...section, [field]: value } : section
-      )
-      return newSections
-    })
+    const newSections = sections.map((section, i) => 
+      i === index ? { ...section, [field]: value } : section
+    )
+    onUpdateSections(newSections)
   }, [onUpdateSections, uploadFile])
 
   const removeSection = useCallback((indexToRemove: number) => {
-    onUpdateSections(prevSections => {
-      const updatedSections = prevSections.filter((_, i) => i !== indexToRemove)
-      // Sesuaikan activeIndex jika section yang aktif dihapus atau section sebelumnya dihapus
-      if (activeIndex === indexToRemove) {
-        setActiveIndex(Math.max(0, indexToRemove - 1)); // Pindah ke sebelumnya atau 0
-      } else if (activeIndex > indexToRemove) {
-        setActiveIndex(prev => prev - 1);
-      }
-      return updatedSections
-    })
+    const updatedSections = sections.filter((_, i) => i !== indexToRemove)
+    // Sesuaikan activeIndex jika section yang aktif dihapus atau section sebelumnya dihapus
+    if (activeIndex === indexToRemove) {
+      setActiveIndex(Math.max(0, indexToRemove - 1)); // Pindah ke sebelumnya atau 0
+    } else if (activeIndex > indexToRemove) {
+      setActiveIndex(prev => prev - 1);
+    }
+    onUpdateSections(updatedSections)
   }, [onUpdateSections, activeIndex])
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event
 
     if (active.id !== over?.id) {
-      onUpdateSections(prevSections => {
-        const oldIndex = prevSections.findIndex(s => s._id === active.id || `section-${prevSections.indexOf(s)}` === active.id)
-        const newIndex = prevSections.findIndex(s => s._id === over?.id || `section-${prevSections.indexOf(s)}` === over?.id)
+      const oldIndex = sections.findIndex(s => s._id === active.id || `section-${sections.indexOf(s)}` === active.id)
+      const newIndex = sections.findIndex(s => s._id === over?.id || `section-${sections.indexOf(s)}` === over?.id)
 
-        if (oldIndex !== -1 && newIndex !== -1) {
-          const reordered = arrayMove(prevSections, oldIndex, newIndex)
-          
-          // Update active index jika section yang aktif dipindah
-          if (activeIndex === oldIndex) {
-            setActiveIndex(newIndex)
-          } else if (activeIndex === newIndex) {
-            setActiveIndex(oldIndex)
-          }
-          return reordered
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const reordered = arrayMove(sections, oldIndex, newIndex)
+        
+        // Update active index jika section yang aktif dipindah
+        if (activeIndex === oldIndex) {
+          setActiveIndex(newIndex)
+        } else if (activeIndex === newIndex) {
+          setActiveIndex(oldIndex)
         }
-        return prevSections
-      })
+        onUpdateSections(reordered)
+      }
     }
   }, [onUpdateSections, activeIndex])
 
