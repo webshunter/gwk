@@ -11,7 +11,7 @@ type SanityImageValue = {
   alt?: string
 }
 
-export type SectionType = "heroSection" | "heroSection3" | "featureSection" | "testimonialSection" | "mapSection" | "activitySection" | "contentSection1" | "contentSection2"
+export type SectionType = "heroSection" | "heroSection3" | "featureSection" | "testimonialSection" | "mapSection" | "activitySection" | "contentSection1" | "contentSection2" | "contentSection3"
 
 export type MapSection = {
   _type: "mapSection"
@@ -92,6 +92,32 @@ export type ContentSection2 = {
   }>
 }
 
+export type ContentSection3 = {
+  _type: "contentSection3"
+  _key: string
+  ctaLinks: Array<{
+    _key: string
+    name: string
+    link: string
+  }>
+  textColor: "black" | "white" | "gray" | "purple" | "blue"
+  video?: {
+    _type: "file"
+    asset?: {
+      _type: "reference"
+      _ref: string
+      url?: string
+    }
+  } | null
+  title: string
+  description: string
+  gallery: Array<{
+    _key: string
+    title: string
+    image?: SanityImageValue | null
+  }>
+}
+
 export type SectionMap = {
   heroSection: HeroSection
   heroSection3: HeroSection3
@@ -101,6 +127,7 @@ export type SectionMap = {
   activitySection: ActivitySection
   contentSection1: ContentSection1
   contentSection2: ContentSection2
+  contentSection3: ContentSection3
 }
 
 export type HeroSection = {
@@ -233,6 +260,16 @@ export const sectionFactories: Record<SectionType, () => SectionPayload> = {
     mainVideo: null,
     items: [],
   }),
+  contentSection3: () => ({
+    _type: "contentSection3",
+    _key: nanoid(),
+    ctaLinks: [],
+    textColor: "black",
+    video: null,
+    title: "",
+    description: "",
+    gallery: [],
+  }),
 }
 
 export function duplicateSection<T extends SectionPayload>(section: T): T {
@@ -359,6 +396,19 @@ export const sectionPalette: Array<{
       description: "Section description goes here.",
       mediaType: "image",
       items: []
+    }
+  },
+  {
+    type: "contentSection3",
+    title: "Content Section 3",
+    description: "CTA links, video, title, description, and photo gallery",
+    icon: null,
+    defaultData: {
+      ctaLinks: [],
+      textColor: "black",
+      title: "",
+      description: "",
+      gallery: []
     }
   }
 ]

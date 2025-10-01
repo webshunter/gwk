@@ -9,6 +9,7 @@ import { mapSection } from './mapSection'
 import { activitySection } from './activitySection'
 import { contentSection1 } from './contentSection1'
 import { contentSection2 } from './contentSection2'
+import { contentSection3 } from './contentSection3'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -21,5 +22,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     activitySection,
     contentSection1,
     contentSection2,
+    contentSection3,
   ],
 }

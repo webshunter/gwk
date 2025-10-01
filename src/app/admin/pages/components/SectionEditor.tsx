@@ -188,6 +188,29 @@ const sectionTemplates = {
       { key: 'mainVideo', label: 'Main Video', type: 'video', condition: (s: Section) => s.mediaType === 'video' },
       { key: 'items', label: 'Content Items', type: 'contentItems2' }
     ]
+  },
+  contentSection3: {
+    title: 'Content Section 3',
+    icon: '📋',
+    fields: [
+      { key: 'ctaLinks', label: 'CTA Links', type: 'ctaLinks' },
+      { 
+        key: 'textColor', 
+        label: 'Warna Text Link', 
+        type: 'select', 
+        options: [
+          { value: 'black', label: 'Hitam' },
+          { value: 'white', label: 'Putih' },
+          { value: 'gray', label: 'Abu-abu' },
+          { value: 'purple', label: 'Ungu' },
+          { value: 'blue', label: 'Biru' }
+        ]
+      },
+      { key: 'video', label: 'Video', type: 'video' },
+      { key: 'title', label: 'Title', type: 'text', placeholder: 'Masukkan title section' },
+      { key: 'description', label: 'Deskripsi', type: 'textarea', rows: 4, placeholder: 'Deskripsi section' },
+      { key: 'gallery', label: 'Gallery Foto', type: 'galleryPhotos' }
+    ]
   }
 }
 
@@ -384,6 +407,60 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
     const currentGallery = section.gallery || []
     const updatedGallery = currentGallery.filter((_, i) => i !== galleryIndex)
     onUpdate(index, 'gallery', updatedGallery)
+  }
+
+  // Handlers for CTA Links (Content Section 3)
+  const addCtaLink = () => {
+    const currentLinks = section.ctaLinks || []
+    onUpdate(index, 'ctaLinks', [
+      ...currentLinks,
+      { 
+        _key: Math.random().toString(36).substring(2, 11),
+        name: '',
+        link: ''
+      }
+    ])
+  }
+
+  const updateCtaLink = (linkIndex: number, field: string, value: any) => {
+    const currentLinks = section.ctaLinks || []
+    const updatedLinks = currentLinks.map((link: any, i: number) => 
+      i === linkIndex ? { ...link, [field]: value } : link
+    )
+    onUpdate(index, 'ctaLinks', updatedLinks)
+  }
+
+  const removeCtaLink = (linkIndex: number) => {
+    const currentLinks = section.ctaLinks || []
+    const updatedLinks = currentLinks.filter((_: any, i: number) => i !== linkIndex)
+    onUpdate(index, 'ctaLinks', updatedLinks)
+  }
+
+  // Handlers for Gallery Photos (Content Section 3)
+  const addGalleryPhoto = () => {
+    const currentPhotos = section.gallery || []
+    onUpdate(index, 'gallery', [
+      ...currentPhotos,
+      { 
+        _key: Math.random().toString(36).substring(2, 11),
+        title: '',
+        image: null
+      }
+    ])
+  }
+
+  const updateGalleryPhoto = (photoIndex: number, field: string, value: any) => {
+    const currentPhotos = section.gallery || []
+    const updatedPhotos = currentPhotos.map((photo: any, i: number) => 
+      i === photoIndex ? { ...photo, [field]: value } : photo
+    )
+    onUpdate(index, 'gallery', updatedPhotos)
+  }
+
+  const removeGalleryPhoto = (photoIndex: number) => {
+    const currentPhotos = section.gallery || []
+    const updatedPhotos = currentPhotos.filter((_: any, i: number) => i !== photoIndex)
+    onUpdate(index, 'gallery', updatedPhotos)
   }
 
   return (
@@ -1442,6 +1519,191 @@ export default function SectionEditor({ section, index, onUpdate, onRemove }: Se
                       </div>
                     </div>
                   )}
+
+                {/* CTA Links - Content Section 3 */}
+                {field.type === 'ctaLinks' && (
+                  <div className="admin-section-editor-field">
+                    <div className="admin-section-editor-gallery-header" style={{ marginTop: '16px' }}>
+                      <h4>{field.label} ({(section.ctaLinks || []).length})</h4>
+                      <button
+                        type="button"
+                        onClick={addCtaLink}
+                        className="admin-section-editor-add-gallery"
+                      >
+                        <Plus className="admin-section-editor-icon" />
+                        Tambah Link
+                      </button>
+                    </div>
+                    <div className="admin-section-editor-gallery">
+                      {(section.ctaLinks || []).map((link: any, linkIndex: number) => (
+                        <div key={link._key || linkIndex} className="admin-section-editor-gallery-item">
+                          <div className="admin-section-editor-gallery-item-header">
+                            <h5>🔗 Link #{linkIndex + 1}</h5>
+                            <button
+                              type="button"
+                              onClick={() => removeCtaLink(linkIndex)}
+                              className="admin-section-editor-remove-gallery"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+
+                          <div className="admin-section-editor-gallery-item-fields">
+                            {/* Nama Link */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">
+                                Nama Link <span className="admin-section-editor-required">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={link.name || ''}
+                                onChange={(e) => updateCtaLink(linkIndex, 'name', e.target.value)}
+                                className="admin-section-editor-input"
+                                placeholder="Contoh: Buy Ticket, Learn More"
+                              />
+                            </div>
+
+                            {/* Link URL */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">
+                                Link URL <span className="admin-section-editor-required">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={link.link || ''}
+                                onChange={(e) => updateCtaLink(linkIndex, 'link', e.target.value)}
+                                className="admin-section-editor-input"
+                                placeholder="/buy-ticket atau https://example.com"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {(section.ctaLinks || []).length === 0 && (
+                        <div className="admin-section-editor-empty">
+                          <p>Belum ada CTA link. Klik "Tambah Link" untuk menambahkan.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Gallery Photos - Content Section 3 */}
+                {field.type === 'galleryPhotos' && (
+                  <div className="admin-section-editor-field">
+                    <div className="admin-section-editor-gallery-header" style={{ marginTop: '16px' }}>
+                      <h4>{field.label} ({(section.gallery || []).length})</h4>
+                      <button
+                        type="button"
+                        onClick={addGalleryPhoto}
+                        className="admin-section-editor-add-gallery"
+                      >
+                        <Plus className="admin-section-editor-icon" />
+                        Tambah Foto
+                      </button>
+                    </div>
+                    <div className="admin-section-editor-gallery">
+                      {(section.gallery || []).map((photo: any, photoIndex: number) => (
+                        <div key={photo._key || photoIndex} className="admin-section-editor-gallery-item">
+                          <div className="admin-section-editor-gallery-item-header">
+                            <h5>📷 Foto #{photoIndex + 1}</h5>
+                            <button
+                              type="button"
+                              onClick={() => removeGalleryPhoto(photoIndex)}
+                              className="admin-section-editor-remove-gallery"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+
+                          <div className="admin-section-editor-gallery-item-fields">
+                            {/* Image Upload */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">
+                                Foto <span className="admin-section-editor-required">*</span>
+                              </label>
+                              {(() => {
+                                const imageUrl = getImageUrl(photo.image)
+                                if (imageUrl) {
+                                  return (
+                                    <div className="admin-section-editor-image-preview">
+                                      <img src={imageUrl} alt="Preview" className="admin-section-editor-image-preview-img" />
+                                      <button
+                                        type="button"
+                                        onClick={() => updateGalleryPhoto(photoIndex, 'image', null)}
+                                        className="admin-section-editor-image-remove"
+                                      >
+                                        <X size={14} />
+                                      </button>
+                                    </div>
+                                  )
+                                }
+                                const inputId = `gallery-photo-${index}-${photoIndex}`
+                                return (
+                                  <div className="admin-section-editor-upload">
+                                    <input
+                                      id={inputId}
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={async (e) => {
+                                        const file = e.target.files?.[0]
+                                        if (!file) return
+                                        
+                                        // Validate file type
+                                        if (!file.type.startsWith('image/')) {
+                                          alert('Hanya file gambar yang diperbolehkan')
+                                          return
+                                        }
+                                        
+                                        // Validate file size (max 5MB)
+                                        if (file.size > 5 * 1024 * 1024) {
+                                          alert('Ukuran file terlalu besar. Maksimal 5MB')
+                                          return
+                                        }
+                                        
+                                        setUploading(true)
+                                        const url = URL.createObjectURL(file)
+                                        updateGalleryPhoto(photoIndex, 'image', {
+                                          asset: { url },
+                                          file: file
+                                        })
+                                        setUploading(false)
+                                      }}
+                                      style={{ display: 'none' }}
+                                    />
+                                    <label htmlFor={inputId} className="admin-section-editor-upload-label">
+                                      <Upload className="admin-section-editor-icon" />
+                                      <span>{uploading ? 'Uploading...' : 'Upload Foto'}</span>
+                                    </label>
+                                  </div>
+                                )
+                              })()}
+                            </div>
+
+                            {/* Title Foto */}
+                            <div className="admin-section-editor-field">
+                              <label className="admin-section-editor-field-label">
+                                Nama/Title Foto <span className="admin-section-editor-required">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={photo.title || ''}
+                                onChange={(e) => updateGalleryPhoto(photoIndex, 'title', e.target.value)}
+                                className="admin-section-editor-input"
+                                placeholder="Contoh: Garuda Wisnu Statue, Traditional Dance"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {(section.gallery || []).length === 0 && (
+                        <div className="admin-section-editor-empty">
+                          <p>Belum ada foto. Klik "Tambah Foto" untuk menambahkan ke gallery.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
                 </div>
               )
             })}
